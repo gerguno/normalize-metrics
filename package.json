@@ -1,0 +1,33 @@
+{
+  "name": "normalize-metrics",
+  "version": "0.1.0",
+  "private": true,
+  "bin": {
+    "normalize-metrics": "bin/normalize-metrics.js"
+  },
+  "files": [
+    "bin",
+    "cli",
+    "lib/engine.py"
+  ],
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "cli": "node --experimental-strip-types --experimental-default-type=module --no-warnings=ExperimentalWarning cli/index.ts",
+    "test:cli": "node --experimental-strip-types --experimental-default-type=module --test cli/*.test.ts"
+  },
+  "dependencies": {
+    "motion": "^13.4.0",
+    "next": "^15.5.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.18.1",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "sass": "^1.104.1",
+    "typescript": "^5.9.2"
+  }
+}

@@ -1,0 +1,11 @@
+$bp-s: 576px;
+$bp-m: 768px;
+$bp-l: 1050px;
+$bp-xl: 1356px;
+
+:export {
+  bpS: #{$bp-s};
+  bpM: #{$bp-m};
+  bpL: #{$bp-l};
+  bpXl: #{$bp-xl};
+}

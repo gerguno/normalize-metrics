@@ -1,0 +1,156 @@
+:root {
+  //////////////////////////////
+  // ATOMIC
+  //////////////////////////////
+
+  // COLORS
+  --color-gray-1: #fcfcfc;
+  --color-gray-2: #f9f9f9;
+  --color-gray-3: #f0f0f0;
+  --color-gray-4: #e8e8e8;
+  --color-gray-5: #e0e0e0;
+  --color-gray-6: #d9d9d9;
+  --color-gray-7: #cecece;
+  --color-gray-8: #bbbbbb;
+  --color-gray-9: #8d8d8d;
+  --color-gray-10: #838383;
+  --color-gray-11: #646464;
+  --color-gray-12: #202020;
+
+  --color-white: #ffffff;
+  --color-black: var(--color-gray-12);
+
+  --color-blue-4: #d5efff;
+
+  --color-pink-2: #fef7fb;
+  --color-pink-4: #fbdcef;
+  --color-pink-6: #efbfdd;
+  --color-pink-9: #d6409f;
+  --color-pink-11: #c2298a;
+
+  --color-purple-2: #fbf7fe;
+  --color-purple-4: #f2e2fc;
+  --color-purple-6: #e0c4f4;
+  --color-purple-9: #8e4ec6;
+  --color-purple-11: #8145b5;
+
+  --color-indigo-2: #f7f9ff;
+  --color-indigo-4: #e1e9ff;
+  --color-indigo-6: #c1d0ff;
+  --color-indigo-9: #3e63dd;
+  --color-indigo-11: #3a5bc7;
+
+  --color-green-2: #f4fbf6;
+  --color-green-4: #d6f1df;
+  --color-green-6: #adddc0;
+  --color-green-9: #30a46c;
+  --color-green-11: #218358;
+
+  --color-red-2: #fff7f7;
+  --color-red-4: #ffdbdc;
+  --color-red-6: #fdbdbe;
+  --color-red-9: #e5484d;
+  --color-red-11: #ce2c31;
+
+  --color-brown-11: #815e46;
+
+  --color-accent: #fff942;
+  --color-accent-contrast: #eacb3c;
+  --color-border-solid: #d2d2d2;
+
+  // SPACES
+  --space-3xs: 2px;
+  --space-2xs: 4px;
+  --space-xs: 8px;
+  --space-s: 12px;
+  --space-m: 16px;
+  --space-l: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+  --space-4xl: 112px;
+
+  //////////////////////////////
+  // SEMANTIC
+  //////////////////////////////
+
+  // COLORS
+  --color-background: var(--color-white);
+  --color-foreground: var(--color-gray-12);
+  --color-secondary: var(--color-gray-10);
+  --color-sidebar: var(--color-gray-3);
+  --color-focus: var(--color-foreground);
+  --color-border: color-mix(in srgb, var(--color-foreground) 20%, transparent);
+  --color-background-muted: color-mix(
+    in srgb,
+    var(--color-foreground) 3%,
+    transparent
+  );
+  --color-hover-dark: color-mix(
+    in srgb,
+    var(--color-foreground) 6%,
+    transparent
+  );
+  --color-hover-light: color-mix(
+    in srgb,
+    var(--color-background) 6%,
+    transparent
+  );
+  --color-accent-background: color-mix(
+    in srgb,
+    var(--color-accent) 3%,
+    transparent
+  );
+  --color-accent-border: color-mix(
+    in srgb,
+    var(--color-accent) 20%,
+    transparent
+  );
+  --color-accent-background-muted: var(--color-blue-4);
+
+  --color-secondary-pink-background: var(--color-pink-2);
+  --color-secondary-pink-background-muted: var(--color-pink-4);
+  --color-secondary-pink-border: var(--color-pink-6);
+  --color-secondary-pink: var(--color-pink-9);
+  --color-secondary-pink-contrast: var(--color-pink-11);
+
+  --color-secondary-purple-background: var(--color-purple-2);
+  --color-secondary-purple-background-muted: var(--color-purple-4);
+  --color-secondary-purple-border: var(--color-purple-6);
+  --color-secondary-purple: var(--color-purple-9);
+  --color-secondary-purple-contrast: var(--color-purple-11);
+
+  --color-secondary-indigo-background: var(--color-indigo-2);
+  --color-secondary-indigo-background-muted: var(--color-indigo-4);
+  --color-secondary-indigo-border: var(--color-indigo-6);
+  --color-secondary-indigo: var(--color-indigo-9);
+  --color-secondary-indigo-contrast: var(--color-indigo-11);
+
+  --color-secondary-green-background: var(--color-green-2);
+  --color-secondary-green-background-muted: var(--color-green-4);
+  --color-secondary-green-border: var(--color-green-6);
+  --color-secondary-green: var(--color-green-9);
+  --color-secondary-green-contrast: var(--color-green-11);
+
+  --color-secondary-red-background: var(--color-red-2);
+  --color-secondary-red-background-muted: var(--color-red-4);
+  --color-secondary-red-border: var(--color-red-6);
+  --color-secondary-red: var(--color-red-9);
+  --color-secondary-red-contrast: var(--color-red-11);
+
+  --color-secondary-brown-contrast: var(--color-brown-11);
+
+  // SPACES
+  --space-ui-element-height: var(--space-xl);
+  --space-ui-label-gap: var(--space-s);
+  --space-ui-element-padding-inline-text: var(--space-s);
+  --space-ui-element-padding-inline-icon: var(--space-xs);
+
+  // RADII
+  --radius-s: var(--space-xs);
+  --radius-m: var(--space-m);
+
+  // FONTS
+  --font-ui: "KTF Techne", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "Univers Next Typewriter Pro", ui-monoSmpace, monoSmpace;
+}

@@ -1,0 +1,1094 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Equal padding-block does not center ink</title>
+    <style>
+      :root {
+        color-scheme: dark light;
+        --bg: #181818;
+        --elevated: #1e1e1e;
+        --text: #f0f0f0;
+        --text-2: color-mix(in srgb, #f0f0f0 74%, transparent);
+        --text-3: color-mix(in srgb, #f0f0f0 60%, transparent);
+        --text-4: color-mix(in srgb, #f0f0f0 36%, transparent);
+        --fill-1: color-mix(in srgb, #f0f0f0 20%, transparent);
+        --fill-2: color-mix(in srgb, #f0f0f0 14%, transparent);
+        --fill-3: color-mix(in srgb, #f0f0f0 8%, transparent);
+        --fill-4: color-mix(in srgb, #f0f0f0 6%, transparent);
+        --stroke: color-mix(in srgb, #f0f0f0 20%, transparent);
+        --stroke-2: color-mix(in srgb, #f0f0f0 12%, transparent);
+        --stroke-3: color-mix(in srgb, #f0f0f0 8%, transparent);
+        --accent: #4d9fff;
+        --on-accent: #141414;
+        --success: #1f8a65;
+        --danger: #c04848;
+        --warning: #f0a040;
+        --info: #2e79b5;
+        --control: #70b0d8;
+        --radius: 8px;
+        --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+      }
+
+      @media (prefers-color-scheme: light) {
+        :root {
+          --bg: #f7f7f5;
+          --elevated: #ffffff;
+          --text: #141414;
+          --text-2: color-mix(in srgb, #141414 74%, transparent);
+          --text-3: color-mix(in srgb, #141414 60%, transparent);
+          --text-4: color-mix(in srgb, #141414 36%, transparent);
+          --fill-1: color-mix(in srgb, #141414 16%, transparent);
+          --fill-2: color-mix(in srgb, #141414 10%, transparent);
+          --fill-3: color-mix(in srgb, #141414 6%, transparent);
+          --fill-4: color-mix(in srgb, #141414 4%, transparent);
+          --stroke: color-mix(in srgb, #141414 16%, transparent);
+          --stroke-2: color-mix(in srgb, #141414 10%, transparent);
+          --stroke-3: color-mix(in srgb, #141414 7%, transparent);
+          --accent: #0b69d4;
+          --on-accent: #ffffff;
+        }
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: var(--font);
+      }
+      body {
+        padding: 32px 24px 80px;
+      }
+      main {
+        max-width: 1080px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 28px;
+      }
+
+      h1 {
+        font-size: 24px;
+        line-height: 30px;
+        font-weight: 590;
+        margin: 0;
+        text-wrap: balance;
+      }
+      h2 {
+        font-size: 18px;
+        line-height: 24px;
+        font-weight: 590;
+        margin: 0 0 8px;
+      }
+      h3 {
+        font-size: 16px;
+        line-height: 22px;
+        font-weight: 590;
+        margin: 0 0 8px;
+      }
+      p {
+        font-size: 14px;
+        line-height: 20px;
+        color: var(--text-2);
+        margin: 0;
+        max-width: 72ch;
+        text-wrap: pretty;
+      }
+      p.small {
+        font-size: 12px;
+        line-height: 16px;
+        color: var(--text-3);
+      }
+      code {
+        font-family: ui-monoSmpace, SFMono-Regular, Menlo, monoSmpace;
+        font-size: 0.92em;
+        background: var(--fill-3);
+        padding: 1px 5px;
+        border-radius: 4px;
+      }
+
+      .lede {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+      }
+      .stat {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .stat b {
+        font-size: 24px;
+        line-height: 30px;
+        font-weight: 590;
+        font-variant-numeric: tabular-nums;
+      }
+      .stat span {
+        font-size: 12px;
+        line-height: 16px;
+        color: var(--text-3);
+      }
+      .stat.success b {
+        color: var(--success);
+      }
+      .stat.danger b {
+        color: var(--danger);
+      }
+
+      .callout {
+        border: 1px solid var(--stroke-2);
+        background: var(--fill-3);
+        border-radius: var(--radius);
+        padding: 12px 14px;
+        display: grid;
+        gap: 4px;
+      }
+      .callout strong {
+        font-size: 13px;
+        font-weight: 590;
+      }
+      .callout.info {
+        border-color: color-mix(in srgb, var(--info) 40%, var(--stroke-2));
+      }
+      .callout.success {
+        border-color: color-mix(in srgb, var(--success) 40%, var(--stroke-2));
+      }
+      .callout.warn {
+        border-color: color-mix(in srgb, var(--warning) 40%, var(--stroke-2));
+      }
+
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 32px;
+        align-items: end;
+      }
+      .ghosts {
+        display: flex;
+        gap: 28px;
+        align-items: end;
+        flex-wrap: wrap;
+      }
+      .ghost {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+      }
+      .ghost figcaption {
+        text-align: center;
+        font-size: 11px;
+        font-weight: 590;
+      }
+      .ghost figcaption small {
+        display: block;
+        color: var(--text-3);
+        font-weight: 400;
+        font-size: 10px;
+      }
+
+      .anatomy {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: end;
+      }
+      .anatomy figure {
+        margin: 0;
+        min-width: 80px;
+        text-align: center;
+      }
+      .anatomy figcaption {
+        font-size: 12px;
+        font-weight: 590;
+        margin-top: 6px;
+      }
+      .anatomy figcaption small {
+        display: block;
+        color: var(--text-3);
+        font-weight: 400;
+      }
+
+      .legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        font-size: 12px;
+        color: var(--text-2);
+      }
+      .legend i {
+        display: inline-block;
+        width: 12px;
+        height: 12px;
+        margin-inline-end: 8px;
+        vertical-align: -1px;
+      }
+
+      .cards {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+      }
+      .card {
+        border: 1px solid var(--stroke-2);
+        border-radius: var(--radius);
+        background: var(--elevated);
+        overflow: hidden;
+      }
+      .card header {
+        font-size: 12px;
+        padding: 8px 12px;
+        border-bottom: 1px solid var(--stroke-3);
+        color: var(--text-2);
+      }
+      .card .body {
+        padding: 12px;
+        display: grid;
+        gap: 8px;
+      }
+
+      .table-wrap {
+        border: 1px solid var(--stroke-2);
+        border-radius: var(--radius);
+        overflow: auto;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 12px;
+        line-height: 16px;
+      }
+      th,
+      td {
+        padding: 8px 10px;
+        text-align: left;
+        white-space: nowrap;
+      }
+      th {
+        color: var(--text-3);
+        font-weight: 590;
+        border-bottom: 1px solid var(--stroke-2);
+      }
+      td {
+        border-bottom: 1px solid var(--stroke-3);
+        font-variant-numeric: tabular-nums;
+      }
+      tr:last-child td {
+        border-bottom: 0;
+      }
+      td.num,
+      th.num {
+        text-align: right;
+      }
+      .dot {
+        display: inline-block;
+        width: 7px;
+        height: 7px;
+        border-radius: 99px;
+        margin-inline-end: 8px;
+        vertical-align: 1px;
+      }
+      .dot.good {
+        background: var(--success);
+      }
+      .dot.bad {
+        background: var(--danger);
+      }
+
+      .chart {
+        border: 1px solid var(--stroke-3);
+        border-radius: var(--radius);
+        padding: 12px 8px 8px;
+        overflow-x: auto;
+      }
+      .chart svg {
+        display: block;
+        min-width: 720px;
+        width: 100%;
+      }
+      .chart-legend {
+        display: flex;
+        gap: 16px;
+        font-size: 12px;
+        color: var(--text-2);
+        padding: 0 8px 8px;
+      }
+      .swatch {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+        margin-inline-end: 6px;
+        vertical-align: -1px;
+      }
+
+      .pills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .pill {
+        font-size: 12px;
+        line-height: 16px;
+        padding: 4px 8px;
+        background: var(--fill-2);
+        border-radius: 999px;
+        color: var(--text-2);
+      }
+
+      hr {
+        border: 0;
+        border-top: 1px solid var(--stroke-3);
+        margin: 0;
+      }
+
+      @media (max-width: 860px) {
+        .stats,
+        .cards {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (max-width: 560px) {
+        .stats,
+        .cards {
+          grid-template-columns: 1fr;
+        }
+        body {
+          padding: 20px 14px 60px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="lede">
+        <h1>Equal padding-block does not center ink</h1>
+        <p>
+          CSS pads the font’s
+          <strong style="color: var(--text); font-weight: 590">line box</strong>
+          (hhea ascent + descent on macOS), not the visible letters. The fonts
+          that look centered keep empty space above cap-height close to empty
+          space below the baseline. The fonts that look off pin ascent to the
+          top of H and leave ~25–29% of the em hanging unused under the
+          baseline.
+        </p>
+      </section>
+
+      <section class="stats">
+        <div class="stat success">
+          <b>23‰</b
+          ><span>Mean |cap-center offset|, fonts that look centered</span>
+        </div>
+        <div class="stat danger">
+          <b>122‰</b><span>Mean |cap-center offset|, fonts that look off</span>
+        </div>
+        <div class="stat danger">
+          <b>0 units</b
+          ><span>DIN Condensed space above H — ascent equals cap-height</span>
+        </div>
+        <div class="stat">
+          <b>5.3×</b
+          ><span>How much worse the off group is, on this metric</span>
+        </div>
+      </section>
+
+      <aside class="callout info">
+        <strong>What this number is</strong>
+        <p class="small">
+          Cap-center offset is ((ascent − H.yMax) − |descent|) / 2, scaled to
+          1000 units per em. Zero means the vertical center of H sits on the
+          center of the CSS content area. Negative means the word sits high in
+          the button. Measured from compiled Regular faces (DIN Condensed Bold;
+          Inter 3.3 subset). Source: local font files via fontTools, macOS hhea
+          path.
+        </p>
+      </aside>
+
+      <section>
+        <h2>Same button, two metric systems</h2>
+        <p>
+          Dashed line is the mathematical center of the line box. The vertical
+          tick is how far the cap-ink center misses it. Outer fill is equal
+          padding-block around that box — the padding is not the bug.
+        </p>
+        <div class="row" style="margin-top: 16px">
+          <div class="ghosts" id="ghosts"></div>
+          <div style="max-width: 360px; display: grid; gap: 8px">
+            <h3>Why DIN looks glued to the top</h3>
+            <p>
+              hhea ascent is <code>712</code>, and H’s top is also
+              <code>712</code>. Caps touch the top of the em square. Descent is
+              <code>−288</code>, so almost 29% of the line box is empty cellar
+              under a word like SAVE that has no descenders. Equal padding then
+              wraps that cellar, so the word reads high.
+            </p>
+            <p>
+              Areal leaves <code>162</code> units above H and
+              <code>210</code> below the baseline. The leftover is almost
+              symmetric, so the same padding looks centered.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2>Space above H vs space below baseline</h2>
+        <p class="small">
+          Per mille of em, using hhea (what Core Text / Safari / Chrome on macOS
+          use for the content area). Centered fonts have similar bars. Off fonts
+          have a short “above” bar.
+        </p>
+        <div class="chart" style="margin-top: 12px">
+          <div class="chart-legend">
+            <span
+              ><i class="swatch" style="background: var(--info)"></i>Space above
+              H</span
+            >
+            <span
+              ><i class="swatch" style="background: var(--warning)"></i>Space
+              below baseline</span
+            >
+          </div>
+          <div id="chart-space"></div>
+        </div>
+        <p class="small" style="margin-top: 8px">
+          Source: compiled font tables, 18 Sep 2026. NeuzeitGroT omitted — the
+          installed NeuzeGroT*.ttf files are 0-byte stubs dated 1996.
+        </p>
+      </section>
+
+      <section>
+        <h2>How far the word sits off-center at 32px</h2>
+        <div class="chart">
+          <div class="chart-legend">
+            <span
+              ><i class="swatch" style="background: var(--danger)"></i
+              >Cap-center offset at 32px</span
+            >
+            <span>Zero = optical center of H</span>
+          </div>
+          <div id="chart-offset"></div>
+        </div>
+        <p class="small" style="margin-top: 8px">
+          Negative = word sits high. At a typical 32px button label, Areal is
+          0.8px off; DIN is 4.6px off. That is most of a 12px padding-block
+          step.
+        </p>
+      </section>
+
+      <section>
+        <h2>Line box anatomy, scaled to the same cap-height</h2>
+        <p>
+          Accent band on top is unused space above H. Solid band is the capital.
+          Bottom band is unused space below the baseline. Dashed line is box
+          center. Numbers under each column are above / below in ‰ of em.
+        </p>
+        <div class="anatomy" id="anatomy" style="margin-top: 16px"></div>
+        <div class="legend" style="margin-top: 12px">
+          <span
+            ><i style="background: var(--fill-2)"></i>Above H (accents +
+            leading)</span
+          >
+          <span
+            ><i style="background: var(--accent); opacity: 0.85"></i>H /
+            cap-height</span
+          >
+          <span
+            ><i style="background: var(--fill-1)"></i>Below baseline (descender
+            cellar)</span
+          >
+        </div>
+      </section>
+
+      <section>
+        <h2>Two vendor strategies, not two quality levels</h2>
+        <div class="cards" style="margin-top: 12px">
+          <article class="card">
+            <header>UI / display metrics</header>
+            <div class="body">
+              <p>
+                hhea ascent sits well above cap-height so umlauts, rings, and a
+                bit of breathing room live
+                <strong style="color: var(--text); font-weight: 590"
+                  >inside</strong
+                >
+                the line box. Descent is sized to roughly match that leftover.
+                Content height is often 1088–1506‰ of em — they do not force
+                ascent + descent = UPM.
+              </p>
+              <p>
+                ABC Areal, ABC Camera (hhea/win), ABC Walter (hhea/win), Inter 3
+                hhea, Helvetica Neue, Roboto hhea, Neue Haas Unica hhea, KTF
+                Techne (hhea ≈ typo, same leftover pattern as Areal).
+              </p>
+            </div>
+          </article>
+          <article class="card">
+            <header>Em-square / metal-type metrics</header>
+            <div class="body">
+              <p>
+                typo and hhea are packed into the em: ascent + |descent| = 1000.
+                Ascent is set near cap-height (Univers 724 vs H 722; DIN 712 = H
+                712). The remaining ~280 units all go under the baseline.
+                Accents stick out of the typo box; Win metrics are enlarged only
+                so Windows will not clip them.
+              </p>
+              <p>
+                Akkurat LL, Unica77 LL, Univers LT CYR, DIN Condensed. Lineto,
+                Linotype, and DIN-style families inherited this from metal /
+                early PostScript practice.
+              </p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section>
+        <h2>Platform split</h2>
+        <p>
+          macOS Core Text uses <code>hhea</code>. Windows DirectWrite uses OS/2
+          typo metrics only if USE_TYPO_METRICS is set; otherwise Win ascent /
+          descent. Most of these files leave that bit off, so Mac and Windows
+          can disagree.
+        </p>
+        <div class="table-wrap" style="margin-top: 12px">
+          <table>
+            <thead>
+              <tr>
+                <th>Font</th>
+                <th class="num">Mac hhea offset</th>
+                <th class="num">Typo offset</th>
+                <th class="num">Win offset</th>
+                <th>Typo fits em</th>
+                <th>Ascent ≈ cap</th>
+              </tr>
+            </thead>
+            <tbody id="platform-rows"></tbody>
+          </table>
+        </div>
+        <p class="small" style="margin-top: 8px">
+          Univers would look high on a Mac and slightly low on Windows. DIN
+          looks broken on a Mac and almost as good as Areal on Windows Win
+          metrics. Inter 3 looks centered on Mac because hhea is the large Win
+          box; its typo pair still fits the em and would be −64‰ if a browser
+          honored it.
+        </p>
+      </section>
+
+      <section>
+        <h2>Compiled metrics used for the line box</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Font</th>
+                <th class="num">UPM</th>
+                <th>hhea A / D / G</th>
+                <th class="num">H yMax</th>
+                <th class="num">Above H</th>
+                <th class="num">Below</th>
+                <th class="num">Imbalance</th>
+                <th>USE_TYPO</th>
+              </tr>
+            </thead>
+            <tbody id="metrics-rows"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section>
+        <h2>What CSS actually does</h2>
+        <div style="display: grid; gap: 8px">
+          <p>
+            A button with equal <code>padding-block</code> centers the line box,
+            not the ink. With <code>line-height: normal</code>, extra lineGap is
+            split equally as half-leading, which does not cancel an asymmetric
+            ascent/descent split — Univers and DIN both have lineGap 200, and
+            they still sit 137–144‰ off.
+          </p>
+          <p>
+            A one-word label without descenders (Save, Next, OK) makes this
+            obvious. The cellar reserved for p/g/y stays empty. Mixed-case copy
+            is even more top-heavy because most of the ink only reaches
+            x-height.
+          </p>
+          <p>
+            The layout spec is CSS Inline Module Level 3: the content area is
+            the font’s ascent and descent metrics. The intended fix is now
+            <code>text-box: trim-both cap alphabetic</code> (Chrome 133+, Safari
+            18.2+), which trims to cap-height and the alphabetic baseline so
+            equal padding finally means equal space around the letters.
+          </p>
+        </div>
+        <aside class="callout success" style="margin-top: 12px">
+          <strong>If the goal is the button, not the font</strong>
+          <p class="small">
+            Use <code>text-box: trim-both cap alphabetic</code> on the label.
+            That makes Areal and DIN behave the same under equal padding-block,
+            without editing font files.
+          </p>
+        </aside>
+      </section>
+
+      <section>
+        <h2>Do you need Glyphs MCP?</h2>
+        <div class="cards" style="margin-top: 12px">
+          <article class="card">
+            <header>Font files are enough to explain this</header>
+            <div class="body">
+              <p>
+                CSS never sees Glyphs masters, alignment zones, or custom
+                parameters. It sees hhea, OS/2 (sTypo*, usWin*, sCapHeight,
+                USE_TYPO_METRICS), and the actual H outline. Those live in the
+                installed OTF/TTF/WOFF. That is what this page measured.
+              </p>
+            </div>
+          </article>
+          <article class="card">
+            <header>Open Glyphs only if you want to change them</header>
+            <div class="body">
+              <p>
+                Glyphs MCP is useful to rewrite vertical metrics (typoAscender,
+                hheaAscender, winAscent, corresponding descenders, lineGap) and
+                to check that umlauts still fit. It is not required for
+                diagnosis.
+              </p>
+            </div>
+          </article>
+        </div>
+        <aside class="callout warn" style="margin-top: 12px">
+          <strong>NeuzeitGroT was not measurable</strong>
+          <p class="small">
+            /Library/Fonts/NeuzeGroTReg.ttf and its siblings are empty 0-byte
+            files from 1996. A real Neuzeit Grotesk OTF/TTF is needed to put it
+            on this chart. The family is a 1960s Berthold grotesque in the same
+            metric tradition as Univers, so it is expected to land in the off
+            group.
+          </p>
+        </aside>
+      </section>
+
+      <hr />
+
+      <section>
+        <h3>What I used</h3>
+        <div class="pills" id="pills" style="margin-top: 8px"></div>
+        <p class="small" style="margin-top: 10px">
+          Inter is the Gravity Forms 3.3 subset (official Inter 3 hhea/OS/2
+          tables). Helvetica Neue is the Regular face inside
+          /System/Library/Fonts/HelveticaNeue.ttc. ABC Camera is the unlicensed
+          trial Regular. DIN is Apple’s Supplemental Bold — no Regular is
+          installed. KTF Techne is KTFTechne-Regular.otf, Glyphs 3.5.1,
+          USE_TYPO_METRICS on, leftover 156‰ / 205‰ — the same UI-metric pattern
+          as ABC Areal.
+        </p>
+      </section>
+    </main>
+
+    <script>
+      const FONTS = [
+        {
+          name: "ABC Areal",
+          short: "Areal",
+          group: "good",
+          file: "ABCAreal-Regular.ttf",
+          upm: 1000,
+          useTypo: true,
+          hhea: "878 / −210 / 0",
+          cap: 716,
+          above: 162,
+          below: 210,
+          offset: -24,
+          imbalance: 4.4,
+          px32: -0.77,
+          typo: "−24‰",
+          win: "−12‰",
+          typoFitsEm: false,
+          ascentEqCap: false,
+        },
+        {
+          name: "ABC Camera",
+          short: "Camera",
+          group: "good",
+          file: "ABCCamera-Regular-Trial.otf",
+          upm: 2048,
+          useTypo: false,
+          hhea: "2028 / −639 / 0",
+          cap: 1434,
+          above: 290,
+          below: 312,
+          offset: -11,
+          imbalance: 1.7,
+          px32: -0.35,
+          typo: "−49‰",
+          win: "−11‰",
+          typoFitsEm: true,
+          ascentEqCap: false,
+        },
+        {
+          name: "ABC Walter",
+          short: "Walter",
+          group: "good",
+          file: "ABCWalter-AlteNormalgrotesk.otf",
+          upm: 1000,
+          useTypo: false,
+          hhea: "971 / −317 / 0",
+          cap: 700,
+          above: 271,
+          below: 317,
+          offset: -23,
+          imbalance: 3.6,
+          px32: -0.74,
+          typo: "−66‰",
+          win: "−23‰",
+          typoFitsEm: true,
+          ascentEqCap: false,
+        },
+        {
+          name: "Inter 3.3",
+          short: "Inter",
+          group: "good",
+          file: "inter-regular-webfont.woff",
+          upm: 2816,
+          useTypo: false,
+          hhea: "3072 / −1140 / 0",
+          cap: 2048,
+          above: 364,
+          below: 405,
+          offset: -21,
+          imbalance: 2.8,
+          px32: -0.66,
+          typo: "−64‰",
+          win: "−21‰",
+          typoFitsEm: true,
+          ascentEqCap: false,
+        },
+        {
+          name: "Helvetica Neue",
+          short: "Neue",
+          group: "good",
+          file: "HelveticaNeue.ttc Regular",
+          upm: 1000,
+          useTypo: false,
+          hhea: "952 / −213 / 28",
+          cap: 714,
+          above: 238,
+          below: 213,
+          offset: 12.5,
+          imbalance: 2.1,
+          px32: 0.4,
+          typo: "+13‰",
+          win: "+13‰",
+          typoFitsEm: false,
+          ascentEqCap: false,
+        },
+        {
+          name: "Roboto",
+          short: "Roboto",
+          group: "good",
+          file: "Roboto-Regular.ttf",
+          upm: 2048,
+          useTypo: false,
+          hhea: "1900 / −500 / 0",
+          cap: 1456,
+          above: 217,
+          below: 244,
+          offset: -14,
+          imbalance: 2.3,
+          px32: -0.44,
+          typo: "−106‰",
+          win: "−5‰",
+          typoFitsEm: true,
+          ascentEqCap: false,
+        },
+        {
+          name: "Neue Haas Unica",
+          short: "Haas Unica",
+          group: "good",
+          file: "NeueHaasUnicaPro-Regular.ttf",
+          upm: 1000,
+          useTypo: false,
+          hhea: "1166 / −340 / 0",
+          cap: 712,
+          above: 454,
+          below: 340,
+          offset: 57,
+          imbalance: 7.6,
+          px32: 1.82,
+          typo: "−92‰",
+          win: "+57‰",
+          typoFitsEm: true,
+          ascentEqCap: false,
+        },
+        {
+          name: "KTF Techne",
+          short: "Techne",
+          group: "good",
+          file: "KTFTechne-Regular.otf",
+          upm: 1000,
+          useTypo: true,
+          hhea: "878 / −205 / 0",
+          cap: 722,
+          above: 156,
+          below: 205,
+          offset: -24.5,
+          imbalance: 4.5,
+          px32: -0.78,
+          typo: "−27‰",
+          win: "−14.5‰",
+          typoFitsEm: false,
+          ascentEqCap: false,
+        },
+        {
+          name: "Akkurat LL",
+          short: "Akkurat",
+          group: "bad",
+          file: "AkkuratLL-Regular.otf",
+          upm: 1000,
+          useTypo: false,
+          hhea: "760 / −240 / 0",
+          cap: 709,
+          above: 51,
+          below: 240,
+          offset: -94.5,
+          imbalance: 18.9,
+          px32: -3.02,
+          typo: "−94.5‰",
+          win: "−94.5‰",
+          typoFitsEm: true,
+          ascentEqCap: false,
+        },
+        {
+          name: "Unica77 LL",
+          short: "Unica77",
+          group: "bad",
+          file: "Unica77LL-Regular.otf",
+          upm: 1000,
+          useTypo: false,
+          hhea: "750 / −250 / 0",
+          cap: 726,
+          above: 24,
+          below: 250,
+          offset: -113,
+          imbalance: 22.6,
+          px32: -3.62,
+          typo: "−113‰",
+          win: "−113‰",
+          typoFitsEm: true,
+          ascentEqCap: false,
+        },
+        {
+          name: "Univers LT CYR",
+          short: "Univers",
+          group: "bad",
+          file: "UniversLTCYR-55Roman.otf",
+          upm: 1000,
+          useTypo: false,
+          hhea: "724 / −276 / 200",
+          cap: 722,
+          above: 2,
+          below: 276,
+          offset: -137,
+          imbalance: 27.4,
+          px32: -4.38,
+          typo: "−137‰",
+          win: "+64‰",
+          typoFitsEm: true,
+          ascentEqCap: true,
+        },
+        {
+          name: "DIN Condensed",
+          short: "DIN Cond.",
+          group: "bad",
+          file: "DIN Condensed Bold.ttf",
+          upm: 1000,
+          useTypo: false,
+          hhea: "712 / −288 / 200",
+          cap: 712,
+          above: 0,
+          below: 288,
+          offset: -144,
+          imbalance: 28.8,
+          px32: -4.61,
+          typo: "−144‰",
+          win: "−13‰",
+          typoFitsEm: true,
+          ascentEqCap: true,
+        },
+      ];
+
+      const css = getComputedStyle(document.documentElement);
+      const color = (name) => css.getPropertyValue(name).trim();
+
+      function ghost(above, cap, below, label, offset, pad) {
+        const scale = 0.16;
+        const w = 120;
+        const contentH = (above + cap + below) * scale;
+        const boxH = contentH + pad * 2;
+        const inkTop = pad + above * scale;
+        const inkH = cap * scale;
+        const baseline = inkTop + inkH;
+        const cx = w / 2;
+        const mid = pad + contentH / 2;
+        const inkMid = inkTop + inkH / 2;
+        return `
+        <figure class="ghost">
+          <svg width="${w}" height="${boxH}" viewBox="0 0 ${w} ${boxH}" role="img" aria-label="${label} button metrics">
+            <rect x="0" y="0" width="${w}" height="${boxH}" rx="10" fill="${color("--fill-2")}" stroke="${color("--stroke")}" />
+            <rect x="8" y="${pad}" width="${w - 16}" height="${contentH}" fill="${color("--fill-3")}" />
+            <rect x="28" y="${inkTop}" width="${w - 56}" height="${inkH}" fill="${color("--accent")}" opacity="0.85" />
+            <line x1="28" y1="${baseline}" x2="${w - 28}" y2="${baseline}" stroke="${color("--text")}" stroke-width="1" />
+            <line x1="4" y1="${mid}" x2="${w - 4}" y2="${mid}" stroke="${color("--stroke")}" stroke-dasharray="3 3" />
+            <line x1="${cx}" y1="${inkMid}" x2="${cx}" y2="${mid}" stroke="${color("--control")}" stroke-width="1.5" />
+            <text x="${cx}" y="${inkTop + inkH * 0.62}" text-anchor="middle" fill="${color("--on-accent")}" font-size="12" font-weight="600" font-family="ui-sans-serif, system-ui, sans-serif">SAVE</text>
+          </svg>
+          <figcaption>${label}<small>${offset}‰ cap offset</small></figcaption>
+        </figure>`;
+      }
+
+      document.getElementById("ghosts").innerHTML =
+        ghost(162, 716, 210, "ABC Areal", -24, 18) +
+        ghost(0, 712, 288, "DIN Condensed", -144, 18);
+
+      document.getElementById("anatomy").innerHTML = FONTS.map((f) => {
+        const total = f.above + 700 + f.below;
+        const h = 220;
+        const s = h / total;
+        const w = 72;
+        const yCap = f.above * s;
+        const yBelow = (f.above + 700) * s;
+        const capH = 700 * s;
+        const belowH = f.below * s;
+        const aboveH = f.above * s;
+        const mid = h / 2;
+        const inkMid = yCap + capH / 2;
+        return `<figure>
+        <svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="img" aria-label="${f.name} line box">
+          <rect x="18" y="0" width="36" height="${aboveH}" fill="${color("--fill-2")}" />
+          <rect x="18" y="${yCap}" width="36" height="${capH}" fill="${color("--accent")}" opacity="0.85" />
+          <rect x="18" y="${yBelow}" width="36" height="${belowH}" fill="${color("--fill-1")}" />
+          <line x1="14" y1="${yBelow}" x2="58" y2="${yBelow}" stroke="${color("--text")}" stroke-width="1" />
+          <line x1="8" y1="${mid}" x2="64" y2="${mid}" stroke="${color("--stroke")}" stroke-dasharray="2 2" />
+          <line x1="36" y1="${inkMid}" x2="36" y2="${mid}" stroke="${color("--control")}" stroke-width="1.5" />
+        </svg>
+        <figcaption>${f.name}<small>${f.above} / ${f.below}</small></figcaption>
+      </figure>`;
+      }).join("");
+
+      function groupedBars(el, seriesA, seriesB, maxVal, suffix) {
+        const w = 980,
+          h = 280;
+        const m = { t: 12, r: 28, b: 56, l: 36 };
+        const n = FONTS.length;
+        const innerW = w - m.l - m.r;
+        const innerH = h - m.t - m.b;
+        const group = innerW / n;
+        const barW = group * 0.32;
+        const ticks = 5;
+        let grid = "";
+        for (let i = 0; i <= ticks; i++) {
+          const v = (maxVal / ticks) * i;
+          const y = m.t + innerH - (v / maxVal) * innerH;
+          grid += `<line x1="${m.l}" y1="${y}" x2="${w - m.r}" y2="${y}" stroke="${color("--stroke-3")}" />
+          <text x="${m.l - 6}" y="${y + 3}" text-anchor="end" fill="${color("--text-4")}" font-size="10" font-variant-numeric="tabular-nums">${Math.round(v)}${suffix}</text>`;
+        }
+        const bars = FONTS.map((f, i) => {
+          const x0 = m.l + i * group + group * 0.18;
+          const hA = (seriesA[i] / maxVal) * innerH;
+          const hB = (seriesB[i] / maxVal) * innerH;
+          const yA = m.t + innerH - hA;
+          const yB = m.t + innerH - hB;
+          return `<rect x="${x0}" y="${yA}" width="${barW}" height="${hA}" fill="${color("--info")}" />
+          <rect x="${x0 + barW + 3}" y="${yB}" width="${barW}" height="${hB}" fill="${color("--warning")}" />
+          <text x="${x0 + barW}" y="${h + 8}" transform="rotate(-32 ${x0 + barW} ${h - 18})" fill="${color("--text-3")}" font-size="10">${f.short}</text>`;
+        }).join("");
+        el.innerHTML = `<svg viewBox="0 0 ${w} ${h}" role="img">${grid}${bars}</svg>`;
+      }
+
+      function offsetBars(el) {
+        const w = 980,
+          h = 260;
+        const m = { t: 16, r: 36, b: 56, l: 44 };
+        const n = FONTS.length;
+        const innerW = w - m.l - m.r;
+        const innerH = h - m.t - m.b;
+        const group = innerW / n;
+        const barW = group * 0.46;
+        const minV = -5,
+          maxV = 2.5;
+        const yAt = (v) => m.t + innerH - ((v - minV) / (maxV - minV)) * innerH;
+        const zero = yAt(0);
+        const ticks = [-5, -2.5, 0, 2.5];
+        const grid = ticks
+          .map((v) => {
+            const y = yAt(v);
+            const dash = v === 0 ? "" : `stroke-dasharray="3 3"`;
+            return `<line x1="${m.l}" y1="${y}" x2="${w - m.r}" y2="${y}" stroke="${v === 0 ? color("--stroke") : color("--stroke-3")}" ${dash} />
+          <text x="${m.l - 6}" y="${y + 3}" text-anchor="end" fill="${color("--text-4")}" font-size="10">${v} px</text>`;
+          })
+          .join("");
+        const bars = FONTS.map((f, i) => {
+          const x = m.l + i * group + (group - barW) / 2;
+          const y1 = yAt(f.px32);
+          const y = Math.min(zero, y1);
+          const bh = Math.max(2, Math.abs(y1 - zero));
+          return `<rect x="${x}" y="${y}" width="${barW}" height="${bh}" fill="${color("--danger")}" />
+          <text x="${x + barW / 2}" y="${y1 < zero ? y - 4 : y + bh + 11}" text-anchor="middle" fill="${color("--text-2")}" font-size="10" font-variant-numeric="tabular-nums">${f.px32.toFixed(2)}</text>
+          <text x="${x + barW / 2}" y="${h + 8}" transform="rotate(-32 ${x + barW / 2} ${h - 18})" fill="${color("--text-3")}" font-size="10">${f.short}</text>`;
+        }).join("");
+        el.innerHTML = `<svg viewBox="0 0 ${w} ${h}" role="img">${grid}${bars}</svg>`;
+      }
+
+      groupedBars(
+        document.getElementById("chart-space"),
+        FONTS.map((f) => f.above),
+        FONTS.map((f) => f.below),
+        500,
+        "‰",
+      );
+      offsetBars(document.getElementById("chart-offset"));
+
+      const fmt = (n) => (n > 0 ? `+${n}‰` : `${n}‰`.replace("-", "−"));
+
+      document.getElementById("platform-rows").innerHTML = FONTS.map(
+        (f) => `
+      <tr>
+        <td><i class="dot ${f.group}"></i>${f.name}</td>
+        <td class="num">${fmt(f.offset)}</td>
+        <td class="num">${f.typo}</td>
+        <td class="num">${f.win}</td>
+        <td>${f.typoFitsEm ? "yes" : "no"}</td>
+        <td>${f.ascentEqCap ? "yes" : "no"}</td>
+      </tr>`,
+      ).join("");
+
+      document.getElementById("metrics-rows").innerHTML = FONTS.map(
+        (f) => `
+      <tr>
+        <td><i class="dot ${f.group}"></i>${f.name}</td>
+        <td class="num">${f.upm}</td>
+        <td>${f.hhea}</td>
+        <td class="num">${f.cap}</td>
+        <td class="num">${f.above}‰</td>
+        <td class="num">${f.below}‰</td>
+        <td class="num">${f.imbalance}%</td>
+        <td>${f.useTypo ? "yes" : "no"}</td>
+      </tr>`,
+      ).join("");
+
+      document.getElementById("pills").innerHTML = FONTS.map(
+        (f) => `<span class="pill">${f.file}</span>`,
+      ).join("");
+    </script>
+  </body>
+</html>

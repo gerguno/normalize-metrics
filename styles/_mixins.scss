@@ -1,0 +1,10 @@
+@mixin hover-supported {
+  @media (hover: hover) and (pointer: fine) {
+    @content;
+  }
+}
+
+@mixin trim {
+  text-box-trim: trim-both;
+  text-box-edge: cap alphabetic;
+}

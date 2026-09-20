@@ -1,0 +1,37 @@
+@import "@/styles/mixins";
+
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  height: var(--space-ui-element-height);
+  padding: 8px var(--space-ui-element-padding-inline-text);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-s);
+  background: transparent;
+  color: var(--color-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+
+  @include hover-supported {
+    &:hover:not(.active) {
+      background-color: var(--color-hover-dark);
+    }
+  }
+}
+
+.active {
+  background-color: var(--color-hover-dark);
+  color: var(--color-foreground);
+  cursor: default;
+}
+
+.icon {
+  display: flex;
+  flex-shrink: 0;
+  color: currentColor;
+}

@@ -1,0 +1,32 @@
+@import "@/styles/responsives";
+
+.root {
+  width: 100%;
+  background: var(--color-background);
+  border-radius: var(--radius-m);
+  padding: var(--space-l);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-l);
+}
+
+@include xl {
+  .root {
+    position: fixed;
+    inset-inline-end: var(--space-l);
+    inset-block-end: var(--space-l);
+    z-index: 6;
+    width: 100%;
+    max-width: 320px;
+  }
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.legal {
+  color: var(--color-secondary);
+}

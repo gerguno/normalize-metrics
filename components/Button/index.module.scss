@@ -1,0 +1,113 @@
+@import "@/styles/mixins";
+
+.root {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  height: var(--space-ui-element-height);
+  min-height: var(--space-ui-element-height);
+  padding: 0 var(--space-ui-element-padding-inline-text);
+  border: 0;
+  border-radius: var(--radius-s);
+  background-color: transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    opacity 0.2s ease,
+    scale 0.12s ease;
+
+  &:disabled,
+  &[aria-disabled="true"] {
+    opacity: 0.5;
+    cursor: default;
+  }
+
+  &:not(:disabled):not([aria-disabled="true"]):active {
+    scale: 0.96;
+  }
+}
+
+.primary {
+  background-color: var(--color-foreground);
+  color: var(--color-background);
+
+  @include hover-supported {
+    &:not(:disabled):hover {
+      background-color: color-mix(
+        in srgb,
+        var(--color-background) 6%,
+        var(--color-foreground)
+      );
+    }
+  }
+}
+
+.secondary {
+  background-color: var(--color-hover-dark);
+  border: 1px solid var(--color-border);
+  color: var(--color-foreground);
+
+  @include hover-supported {
+    &:not(:disabled):hover {
+      background-color: color-mix(
+        in srgb,
+        var(--color-foreground) 6%,
+        var(--color-hover-dark)
+      );
+    }
+  }
+}
+
+.tertiary {
+  border: 1px solid var(--color-border);
+  color: var(--color-foreground);
+
+  @include hover-supported {
+    &:not(:disabled):hover {
+      background-color: var(--color-hover-dark);
+    }
+  }
+}
+
+.quaternary {
+  width: var(--space-xl);
+  padding: 0;
+  color: var(--color-border-solid);
+
+  @include hover-supported {
+    &:not(:disabled):hover {
+      background-color: var(--color-hover-dark);
+      color: var(--color-secondary);
+    }
+  }
+}
+
+.shell {
+  width: var(--space-xl);
+  padding: 0;
+  background-color: var(--color-foreground);
+  color: var(--color-background);
+
+  @include hover-supported {
+    &:not(:disabled):hover {
+      background-color: color-mix(in srgb, var(--color-foreground) 88%, white);
+    }
+  }
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.label {
+  display: inline-flex;
+  align-items: center;
+}
+
+.icon {
+  display: flex;
+  flex-shrink: 0;
+}

@@ -1,0 +1,89 @@
+.root {}
+
+.wrap {
+  position: relative;
+  isolation: isolate;
+  width: fit-content;
+}
+
+.pill {
+  width: fit-content;
+  padding: 42px 30px;
+  border-radius: 28.379px;
+  overflow: hidden;
+  background: var(--color-background-muted);
+  position: relative;
+  pointer-events: none;
+}
+
+.band {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-style: dashed;
+}
+
+.bandTop {
+  top: 0;
+  border-width: 0 0 1px;
+}
+
+.bandBottom {
+  bottom: 0;
+  border-width: 1px 0 0;
+}
+
+.good {
+  background: rgba(48, 164, 108, 0.15);
+  border-color: var(--color-secondary-green);
+  color: var(--color-secondary-green-contrast);
+}
+
+.bad {
+  background: rgba(229, 72, 77, 0.15);
+  border-color: var(--color-secondary-red);
+  color: var(--color-secondary-red-contrast);
+}
+
+.word {
+  position: relative;
+  z-index: 1;
+  margin: 0;
+  font-size: 51.437px;
+  text-align: center;
+  white-space: nowrap;
+  line-height: normal;
+  text-box-trim: none;
+}
+
+.guideLayer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.guide {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0;
+  pointer-events: none;
+  background: none;
+}
+
+.guideValue {
+  position: absolute;
+  top: 0;
+  left: calc(100% + var(--space-xs));
+  transform: translateY(-50%);
+  white-space: nowrap;
+}
+
+.above .guideValue {
+  transform: translateY(-100%);
+}
+
+.below .guideValue {
+  transform: none;
+}

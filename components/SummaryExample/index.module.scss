@@ -1,0 +1,21 @@
+@import "@/styles/mixins";
+
+.root {}
+
+.centered {
+  display: inline-flex;
+  gap: var(--space-2xs);
+  white-space: nowrap;
+
+  span {
+    @include trim;
+  }
+}
+
+.good {
+  color: var(--color-secondary-green-contrast);
+}
+
+.bad {
+  color: var(--color-secondary-red-contrast);
+}

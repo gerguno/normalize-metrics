@@ -1,0 +1,106 @@
+.root {}
+
+.wrap {
+  position: relative;
+  isolation: isolate;
+  width: fit-content;
+}
+
+.frame {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: var(--space-xl);
+  background: var(--color-sidebar);
+  overflow: hidden;
+}
+
+.glyph {
+  position: relative;
+  z-index: 2;
+  margin: 0;
+  padding: var(--space-l);
+  font-size: 186px;
+  line-height: normal;
+  text-box-trim: none;
+}
+
+.leftoverTop,
+.leftoverBottom {
+  position: absolute;
+  left: 0;
+  right: 0;
+}
+
+.leftoverTop {
+  background: rgba(142, 78, 198, 0.15);
+}
+
+.leftoverBottom {
+  background: rgba(214, 64, 159, 0.15);
+}
+
+.guideLayer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.guide {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0;
+  pointer-events: none;
+}
+
+.guideLine {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  border-top: 1px dashed currentColor;
+}
+
+.guideLabel,
+.guideValue {
+  position: absolute;
+  top: 0;
+  transform: translateY(-50%);
+  white-space: nowrap;
+}
+
+.above .guideLabel,
+.above .guideValue {
+  transform: translateY(-100%);
+}
+
+.below .guideLabel,
+.below .guideValue {
+  transform: none;
+}
+
+.guideLabel {
+  right: calc(100% + var(--space-xs));
+}
+
+.guideValue {
+  left: calc(100% + var(--space-xs));
+}
+
+.cap {
+  color: var(--color-secondary-purple);
+}
+
+.pink {
+  color: var(--color-secondary-pink);
+}
+
+.indigo {
+  color: var(--color-secondary-indigo);
+}
+
+.muted {
+  color: var(--color-secondary);
+}

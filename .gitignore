@@ -3,3 +3,9 @@
 .env.*
 *.log
 node_modules/
+.next/
+out/
+__pycache__/
+.venv/
+*.tsbuildinfo
+next-env.d.ts

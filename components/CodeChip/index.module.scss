@@ -1,0 +1,11 @@
+@import "@/styles/mixins.scss";
+
+.root {
+  display: inline;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+  padding: var(--space-3xs) 6px calc(var(--space-3xs) + 1px) 6px;
+  border-radius: var(--space-2xs);
+  background: var(--color-hover-dark);
+  color: var(--color-foreground);
+}

@@ -1,0 +1,31 @@
+@import "./breakpoints.module";
+
+@mixin s {
+  @media (min-width: #{$bp-s}) {
+    @content;
+  }
+}
+
+@mixin m {
+  @media (min-width: #{$bp-m}) {
+    @content;
+  }
+}
+
+@mixin l {
+  @media (min-width: #{$bp-l}) {
+    @content;
+  }
+}
+
+@mixin xl {
+  @media (min-width: #{$bp-xl}) {
+    @content;
+  }
+}
+
+@mixin rwd($screen) {
+  @media (min-width: #{$screen}px) {
+    @content;
+  }
+}

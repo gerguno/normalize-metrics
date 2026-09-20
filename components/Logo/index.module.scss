@@ -1,0 +1,49 @@
+.root {
+  display: flex;
+  gap: var(--space-xs);
+  align-items: center;
+  position: relative;
+  z-index: 5;
+}
+
+.mark,
+.menu {
+  width: 96px;
+  height: 96px;
+  border: 0;
+  padding: 0;
+  border-radius: var(--radius-m);
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mark {
+  background: var(--color-foreground);
+  color: var(--color-background);
+}
+
+.menu {
+  background: var(--color-background);
+  color: var(--color-foreground);
+}
+
+.glyph {
+  display: block;
+}
+
+.lines {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 44px;
+}
+
+.line {
+  display: block;
+  height: 4px;
+  background: var(--color-foreground);
+  border-radius: 0;
+}

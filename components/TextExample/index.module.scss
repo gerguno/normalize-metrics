@@ -1,0 +1,56 @@
+.root {}
+
+.quote {
+  width: 336px;
+  padding: var(--space-xl);
+  border-radius: var(--space-xl);
+  background: var(--color-background-muted);
+  position: relative;
+  overflow: hidden;
+}
+
+.quoteText {
+  position: relative;
+  z-index: 1;
+  font-size: 20px;
+  line-height: normal;
+  text-box-trim: none;
+  white-space: pre-wrap;
+}
+
+.lines {
+  position: absolute;
+  inset: var(--space-xl) 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-size: 20px;
+  line-height: normal;
+  pointer-events: none;
+}
+
+.line {
+  height: 1lh;
+  position: relative;
+  flex: none;
+}
+
+.lineOver {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: calc(var(--over) * 1lh);
+  border-bottom: 1px dashed var(--color-secondary-pink);
+  background: rgba(214, 64, 159, 0.15);
+}
+
+.lineUnder {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(var(--under) * 1lh);
+  border-top: 1px dashed var(--color-secondary-purple);
+  background: rgba(142, 78, 198, 0.15);
+}
