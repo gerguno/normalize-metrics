@@ -3,7 +3,7 @@ export function inertOutside(root: HTMLElement) {
   let node: HTMLElement | null = root;
 
   while (node && node !== document.body) {
-    const parent = node.parentElement;
+    const parent: HTMLElement | null = node.parentElement;
     if (!parent) break;
     for (const sibling of Array.from(parent.children)) {
       if (sibling === node || !(sibling instanceof HTMLElement)) continue;
