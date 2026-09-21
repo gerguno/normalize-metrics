@@ -4,7 +4,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   experimental: {
     serverActions: {
-      bodySmizeLimit: "12mb",
+      bodySizeLimit: "12mb",
     },
   },
   sassOptions: {
