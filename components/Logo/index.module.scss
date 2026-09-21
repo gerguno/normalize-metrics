@@ -1,49 +1,66 @@
+$rect-count: 7;
+$invert-duration: 0.35s;
+$invert-ease: cubic-bezier(0.2, 0, 0, 1);
+
 .root {
   display: flex;
-  gap: var(--space-xs);
   align-items: center;
-  position: relative;
-  z-index: 5;
-}
-
-.mark,
-.menu {
-  width: 96px;
-  height: 96px;
-  border: 0;
-  padding: 0;
-  border-radius: var(--radius-m);
-  overflow: hidden;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.mark {
-  background: var(--color-foreground);
-  color: var(--color-background);
-}
-
-.menu {
-  background: var(--color-background);
+  gap: var(--space-xl);
+  width: fit-content;
   color: var(--color-foreground);
+  text-decoration: none;
+
+  svg {
+    display: block;
+    flex-shrink: 0;
+    aspect-ratio: 1 / 1;
+
+    g rect {
+      transition:
+        transform var(--logo-duration) ease,
+        fill $invert-duration $invert-ease;
+      transform-origin: center center;
+    }
+
+    @for $i from 1 through $rect-count {
+      g rect:nth-of-type(#{$i}) {
+        transition-delay:
+          calc(var(--logo-duration) * var(--logo-stagger) * #{$i - 1}), 0s;
+      }
+    }
+
+    g rect:nth-of-type(odd) {
+      fill: var(--color-foreground);
+    }
+
+    g rect:nth-of-type(even) {
+      fill: var(--color-background);
+    }
+  }
+
+  &.inverted svg g {
+    rect:nth-of-type(odd) {
+      fill: var(--color-background);
+    }
+
+    rect:nth-of-type(even) {
+      fill: var(--color-foreground);
+    }
+  }
+
+  &.active svg g {
+    rect {
+      transform: scale(4);
+    }
+
+    rect:nth-of-type(3) {
+      transform: scale(4.4);
+    }
+  }
 }
 
-.glyph {
-  display: block;
-}
-
-.lines {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  width: 44px;
-}
-
-.line {
-  display: block;
-  height: 4px;
-  background: var(--color-foreground);
-  border-radius: 0;
+@media (prefers-reduced-motion: reduce) {
+  .root svg g rect {
+    transition: transform var(--logo-duration) ease;
+  }
 }

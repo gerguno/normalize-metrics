@@ -1,32 +1,66 @@
 {
   "name": "normalize-metrics",
-  "version": "0.1.0",
-  "private": true,
+  "version": "0.1.1",
+  "description": "Rewrite font vertical metrics so a word sits in the box",
+  "license": "MIT",
+  "author": {
+    "name": "Oles Gergun",
+    "url": "https://olesgergun.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gerguno/normalize-metrics-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/gerguno/normalize-metrics-cli/issues"
+  },
+  "homepage": "https://github.com/gerguno/normalize-metrics-cli#readme",
+  "keywords": [
+    "font",
+    "fonts",
+    "metrics",
+    "vertical-metrics",
+    "otf",
+    "ttf",
+    "woff",
+    "typography",
+    "cli"
+  ],
   "bin": {
     "normalize-metrics": "bin/normalize-metrics.js"
   },
   "files": [
     "bin",
-    "cli",
+    "dist",
     "lib/engine.py"
   ],
+  "engines": {
+    "node": ">=20"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "deploy": "next build && next start -p 3014",
     "cli": "node --experimental-strip-types --experimental-default-type=module --no-warnings=ExperimentalWarning cli/index.ts",
-    "test:cli": "node --experimental-strip-types --experimental-default-type=module --test cli/*.test.ts"
-  },
-  "dependencies": {
-    "motion": "^13.4.0",
-    "next": "^15.5.3",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "test:cli": "node --experimental-strip-types --experimental-default-type=module --test cli/*.test.ts",
+    "build:cli": "tsc -p cli/tsconfig.build.json && printf '{\"type\":\"module\"}\\n' > dist/package.json",
+    "prepack": "npm run build:cli",
+    "prepublishOnly": "npm run test:cli"
   },
   "devDependencies": {
     "@types/node": "^22.18.1",
     "@types/react": "^19.1.12",
     "@types/react-dom": "^19.1.9",
+    "motion": "^13.4.0",
+    "next": "^15.5.3",
+    "overlayscrollbars": "^2.16.0",
+    "overlayscrollbars-react": "^0.5.6",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
     "sass": "^1.104.1",
     "typescript": "^5.9.2"
   }

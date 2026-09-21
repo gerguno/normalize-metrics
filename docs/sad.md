@@ -2,14 +2,14 @@
 status: Draft
 owner: Oles
 reviewers: ["Oles"]
-updated_at: "2026-09-20"
+updated_at: "2026-09-21"
 feature_size: S
 target_surfaces: [web-frontend, cli]
 ---
 
 # Software Architecture Document — normalize-metrics
 
-There is no `spec.md` yet. This SAD is standalone. It records two product facts (Rhizome project lock; GUI + CLI) plus the architecture already in the repo and ADRs 0001–0002. Screen, IA, and public copy live in Figma; the rewrite formula lives in ADR 0001.
+There is no `spec.md` yet. This SAD is standalone. It records two product facts (Rhizome project lock; GUI + CLI) plus the architecture already in the repo and ADRs 0001–0003. Screen, IA, and public copy live in Figma; the rewrite formula lives in ADR 0001, with used line-height leftover in ADR 0003.
 
 ## 1. Introduction and goals
 
@@ -101,11 +101,11 @@ C4Context
 
 2. **Ship a GUI and a CLI on one engine** — ADR 0002. GUI is the proof (drop, measure, download). CLI is the batch / CI path (file or folder of `.otf` / `.ttf` / `.woff` / `.woff2`). Both call `lib/engine.py`. Figma node `145:4878` is the product logic for both sections of the page.
 
-3. **Rewrite vertical metrics only, cap-centered** — ADR 0001. Descender-symmetric extra, typo = hhea, `USE_TYPO_METRICS` on, Win bbox envelope. Outlines, UPM, and horizontal metrics stay untouched. CSS trim is acknowledged in the intro and is not the product.
+3. **Rewrite vertical metrics only, cap-centered** — ADR 0001. Descender-symmetric extra, typo = hhea, `USE_TYPO_METRICS` on, Win bbox envelope. Outlines, UPM, and horizontal metrics stay untouched. CSS trim is acknowledged in the intro and is not the product. **Spend original used line-height before growing** — ADR 0003. `lineGap` is leftover `oldAscent + |oldDescent| + oldLineGap − content`, not a constant 0.
 
 4. **npm is the CLI front door** — `npx` / `npm i -g` / a repo devDependency. Python is an implementation detail. Config is `include` / `exclude` / `outDir` / `suffix`. `--check` and `--dry-run` write nothing.
 
-Each later decision should trace to one of these. A second extra-rule flag, a pip install, or extracting Rhizome in this repo would contradict 1–4.
+Each later decision should trace to one of these. A second extra-rule flag, a pip install, or extracting Rhizome in this repo would contradict 1–4. ADR 0003 is not a second extra-rule; it only assigns `lineGap`.
 
 ## 5. Building block view
 
@@ -230,6 +230,7 @@ v1 is one Next.js deployable plus a future npm CLI. No replicas, no worker, no d
 |---|---|---|---|
 | 0001 | Make the line box symmetric around cap-height | Accepted | §4 |
 | 0002 | Ship a GUI and a CLI on one normalize engine | Accepted | §4 |
+| 0003 | Spend leading before growing the line box | Accepted | §4 |
 
 ADR files live under `docs/adr/NNNN-<title>.md`.
 
@@ -237,12 +238,12 @@ The Rhizome kit lock is a §4 pillar, not a third ADR: it is reversible by extra
 
 ## 10. Quality requirements
 
-No `spec.md` §6 NFR yet. Scenarios are qualitative from ADRs 0001–0002 and Figma node `145:4878`. Do not invent latency or availability numbers.
+No `spec.md` §6 NFR yet. Scenarios are qualitative from ADRs 0001–0003 and Figma node `145:4878`. Do not invent latency or availability numbers.
 
 **QG-1. Optical correctness**
 - **When:** a static TTF/OTF/WOFF/WOFF2 is rewritten.
-- **Then:** leftover above cap-height equals leftover below the baseline on the hhea path; outlines are unchanged.
-- **How verify:** GUI before/after `example`; research set in ADR 0001 (Areal, Techne, Akkurat, DIN); CLI `--dry-run` offset column.
+- **Then:** leftover above cap-height equals leftover below the baseline on the hhea path; outlines are unchanged. If original `ascent + |descent| + lineGap` already covers `cap + 2 × extra`, used `line-height: normal` does not grow (ADR 0003).
+- **How verify:** GUI before/after `example` and Text sample; research set in ADR 0001 (Areal, Techne, Akkurat, DIN); Ritma/Unica/America in ADR 0003; CLI `--dry-run` offset column.
 
 **QG-2. Surface lockstep**
 - **When:** the same file is sent through the GUI and the CLI.
@@ -264,6 +265,7 @@ No `spec.md` §6 NFR yet. Scenarios are qualitative from ADRs 0001–0002 and Fi
 | Python must exist on the API host | Medium | Document the runtime; hide pip from users | Oles |
 | `--check` will fail existing kits the first time | Medium | Expected; document in CLI copy | Oles |
 | Variable fonts and TTC skipped in v1 | Low | One-line skip reason; ADR 0001 out-of-scope | Oles |
+| TextExample `--lead` is not table `lineGap` | Low | ADR 0003 spends file used height only; do not chase UA `normal` | Oles |
 | No spec.md — quality numbers are qualitative | Open question | Write `spec.md` before treating §10 as numeric NFRs | Oles |
 
 **Accepted debt (acceptable in v1, plan to fix later):**
@@ -281,7 +283,9 @@ No `spec.md` §6 NFR yet. Scenarios are qualitative from ADRs 0001–0002 and Fi
 | UI kit | Rhizome primitives and tokens. Locked in this repo for now. Does not include `example`. |
 | example | Feature-specific measurement card: leftover bands, pill, before/after. Stays with this project. |
 | Line box | CSS content area from the font’s ascent and descent (hhea on macOS). Not the ink of H. |
+| Used line-height | `ascent + \|descent\| + lineGap` — what `line-height: normal` uses on the hhea/typo path. ADR 0003 spends this before growing. |
+| Leading (`--lead`) | Extra used height outside the content area. Pink/purple bands in TextExample sit inside the content area; white between stacked bands is this lead. Table `lineGap` is the file part; a UA can add more. |
 | Cap-center offset | `((ascent − H.yMax) − \|descent\|) / 2`, per mille of em. Zero means H is vertically centered. |
 | Default case | Untrimmed `text-box`. What most type ramps and kits were written for. Why this product exists. |
-| Engine | `lib/engine.py` — the 0001 rewrite. GUI API and CLI are wrappers. |
+| Engine | `lib/engine.py` — the 0001 rewrite plus 0003 `lineGap`. GUI API and CLI are wrappers. |
 | Tried fonts | Unica77 (Lineto), America (Grilli Type), Ritma (British Standard Type) — Figma GUI examples. |

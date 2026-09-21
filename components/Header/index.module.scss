@@ -1,0 +1,168 @@
+@import "@/styles/mixins";
+
+$menu-duration: 0.35s;
+$menu-ease: cubic-bezier(0.2, 0, 0, 1);
+$line-shift: 6px;
+$compact-line-shift: 4px;
+$header-size: 96px;
+$compact-size: 50px;
+
+.wrap {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3xl);
+}
+
+.content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3xl);
+}
+
+.origin {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  --menu-gap: var(--space-3xl);
+}
+
+@mixin bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.root {
+  @include bar;
+  position: relative;
+  z-index: 11;
+}
+
+.compact {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 12;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  padding: var(--space-l);
+  background: var(--color-background);
+  border-bottom: 1px solid var(--color-border);
+  transform: translateY(0);
+  --menu-gap: var(--space-l);
+}
+
+.compactColumn {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 600px;
+}
+
+.compactInner {
+  @include bar;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .compact {
+    transition-property: transform;
+    transition-duration: $menu-duration;
+    transition-timing-function: $menu-ease;
+  }
+}
+
+.hidden {
+  transform: translateY(-100%);
+  pointer-events: none;
+}
+
+.mark,
+.menu {
+  width: $header-size;
+  height: $header-size;
+  border: 0;
+  padding: 0;
+  overflow: hidden;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.compact .mark,
+.compact .menu {
+  width: $compact-size;
+  height: $compact-size;
+}
+
+.mark {
+  border-radius: var(--radius-m);
+}
+
+.compact .mark {
+  border-radius: var(--radius-s);
+}
+
+.menu {
+  background: transparent;
+  color: var(--color-border-solid);
+  transition: color 0.2s;
+
+  @include hover-supported {
+    &:hover {
+      color: var(--color-secondary);
+    }
+  }
+}
+
+.lines {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 47px;
+}
+
+.compact .lines {
+  width: 24px;
+  gap: 3px;
+}
+
+.line {
+  display: block;
+  height: 1px;
+  background: currentColor;
+  transition-property: transform, opacity;
+  transition-duration: $menu-duration;
+  transition-timing-function: $menu-ease;
+}
+
+.open .line:nth-child(1) {
+  transform: translateY($line-shift);
+}
+
+.open .line:nth-child(3) {
+  transform: translateY(-$line-shift);
+}
+
+.compact.open .line:nth-child(1) {
+  transform: translateY($compact-line-shift);
+  opacity: 0;
+}
+
+.compact.open .line:nth-child(3) {
+  transform: translateY(-$compact-line-shift);
+  opacity: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .line {
+    transition: none;
+  }
+}

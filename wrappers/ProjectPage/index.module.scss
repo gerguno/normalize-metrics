@@ -1,3 +1,5 @@
+@import "@/styles/responsives";
+
 .page {
   min-height: 100vh;
   display: flex;
@@ -15,10 +17,6 @@
   pointer-events: none;
 }
 
-.pageMenuOpen {
-  overflow: hidden;
-}
-
 .column {
   width: 600px;
   max-width: 100%;
@@ -32,7 +30,18 @@
   align-items: center;
   gap: var(--space-xs);
   color: var(--color-secondary);
-  height: 16px;
+}
+
+.crumbLead {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  flex-shrink: 0;
+}
+
+.crumbPath {
+  display: flex;
+  align-items: center;
 }
 
 .crumbCurrent {
@@ -40,6 +49,28 @@
   display: flex;
   align-items: center;
   gap: var(--space-xs);
+}
+
+@include to-s {
+  .crumb {
+    display: block;
+  }
+
+  .crumbLead {
+    display: inline-flex;
+    margin-inline-end: var(--space-xs);
+    vertical-align: middle;
+  }
+
+  .crumbCurrent {
+    display: inline;
+
+    svg {
+      display: inline-block;
+      vertical-align: -0.2em;
+      margin-inline-end: var(--space-xs);
+    }
+  }
 }
 
 .sections {
@@ -89,6 +120,12 @@
   flex-direction: column;
   gap: var(--space-xs);
   width: 100%;
+  transition: opacity 0.2s ease;
+}
+
+.examplesBusy {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .error {
@@ -110,44 +147,10 @@
   color: var(--color-secondary);
 }
 
-.overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 3;
-  background: color-mix(in srgb, var(--color-foreground) 94%, transparent);
-  color: var(--color-background);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 48px 24px 24px;
-}
-
-.overlayInner {
-  width: 600px;
-  max-width: 100%;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding-top: 160px;
-}
-
-.nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 32px;
-  max-width: 601px;
-}
-
-.nav a {
-  color: var(--color-background);
-  text-decoration: none;
-}
-
-.nav a:hover {
-  text-decoration: underline;
-}
-
-.byline {
-  color: var(--color-background);
+@include to-s {
+  .footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-s);
+  }
 }

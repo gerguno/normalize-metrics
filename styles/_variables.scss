@@ -56,7 +56,7 @@
 
   --color-accent: #fff942;
   --color-accent-contrast: #eacb3c;
-  --color-border-solid: #d2d2d2;
+  --color-border-solid: #dedede;
 
   // SPACES
   --space-3xs: 2px;
@@ -80,7 +80,7 @@
   --color-secondary: var(--color-gray-10);
   --color-sidebar: var(--color-gray-3);
   --color-focus: var(--color-foreground);
-  --color-border: color-mix(in srgb, var(--color-foreground) 20%, transparent);
+  --color-border: color-mix(in srgb, var(--color-foreground) 15%, transparent);
   --color-background-muted: color-mix(
     in srgb,
     var(--color-foreground) 3%,
@@ -113,12 +113,22 @@
   --color-secondary-pink-border: var(--color-pink-6);
   --color-secondary-pink: var(--color-pink-9);
   --color-secondary-pink-contrast: var(--color-pink-11);
+  --color-secondary-pink-fill: color-mix(
+    in srgb,
+    var(--color-secondary-pink) 15%,
+    transparent
+  );
 
   --color-secondary-purple-background: var(--color-purple-2);
   --color-secondary-purple-background-muted: var(--color-purple-4);
   --color-secondary-purple-border: var(--color-purple-6);
   --color-secondary-purple: var(--color-purple-9);
   --color-secondary-purple-contrast: var(--color-purple-11);
+  --color-secondary-purple-fill: color-mix(
+    in srgb,
+    var(--color-secondary-purple) 15%,
+    transparent
+  );
 
   --color-secondary-indigo-background: var(--color-indigo-2);
   --color-secondary-indigo-background-muted: var(--color-indigo-4);
@@ -131,12 +141,22 @@
   --color-secondary-green-border: var(--color-green-6);
   --color-secondary-green: var(--color-green-9);
   --color-secondary-green-contrast: var(--color-green-11);
+  --color-secondary-green-fill: color-mix(
+    in srgb,
+    var(--color-secondary-green) 15%,
+    transparent
+  );
 
   --color-secondary-red-background: var(--color-red-2);
   --color-secondary-red-background-muted: var(--color-red-4);
   --color-secondary-red-border: var(--color-red-6);
   --color-secondary-red: var(--color-red-9);
   --color-secondary-red-contrast: var(--color-red-11);
+  --color-secondary-red-fill: color-mix(
+    in srgb,
+    var(--color-secondary-red) 15%,
+    transparent
+  );
 
   --color-secondary-brown-contrast: var(--color-brown-11);
 
@@ -152,5 +172,6 @@
 
   // FONTS
   --font-ui: "KTF Techne", ui-sans-serif, system-ui, sans-serif;
+  --font-ui-features: "ss03" 1, "ss05" 1;
   --font-mono: "Univers Next Typewriter Pro", ui-monoSmpace, monoSmpace;
 }

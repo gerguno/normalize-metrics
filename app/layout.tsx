@@ -1,5 +1,8 @@
 import type { Metadata } from "next";
 import { TRIED_FONTS } from "@/lib/triedFonts";
+import Scrollbar from "@/components/Scrollbar";
+import "overlayscrollbars/overlayscrollbars.css";
+import "@/components/Scrollbar/index.scss";
 import "@/styles/globals.scss";
 
 export const metadata: Metadata = {
@@ -12,7 +15,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" data-overlayscrollbars-initialize="">
       <head>
         {TRIED_FONTS.flatMap((font) => [
           <link
@@ -33,7 +36,10 @@ export default function RootLayout({
           />,
         ])}
       </head>
-      <body>{children}</body>
+      <body data-overlayscrollbars-initialize="">
+        {children}
+        <Scrollbar />
+      </body>
     </html>
   );
 }

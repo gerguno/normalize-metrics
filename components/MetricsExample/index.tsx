@@ -5,20 +5,26 @@ import Example, {
   useExample,
   type ExampleDataProps,
 } from "@/components/Example";
-import { guideAligns, type GuideAlign } from "@/lib/guideAlign";
+import { guideAligns, type GuideAlign } from "@/utils/guideAlign";
 import { cn } from "@/utils/cn";
 import textStyles from "@/styles/typography.module.scss";
 import styles from "./index.module.scss";
 
 const FONT_PX = 186;
 
-export default function MetricsExample({ result, loading }: ExampleDataProps) {
+export default function MetricsExample({
+  result,
+  loading,
+  disabled,
+  name,
+}: ExampleDataProps) {
   return (
     <Example
       className={styles.root}
       result={result}
       loading={loading}
-      eyebrow="Analysis"
+      disabled={disabled}
+      name={name}
       title="Metrics comparison"
     >
       <MetricsBody />
@@ -31,6 +37,7 @@ function MetricsBody() {
   const glyphRef = useRef<HTMLParagraphElement>(null);
   const layerRef = useRef<HTMLDivElement>(null);
   const [lineBox, setLineBox] = useState(0);
+  const [fontPx, setFontPx] = useState(FONT_PX);
   const [aligns, setAligns] = useState<GuideAlign[]>([]);
 
   useLayoutEffect(() => {
@@ -41,6 +48,8 @@ function MetricsBody() {
       const pad =
         parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
       setLineBox(el.getBoundingClientRect().height - pad);
+      const nextFont = parseFloat(style.fontSize);
+      if (Number.isFinite(nextFont) && nextFont > 0) setFontPx(nextFont);
     };
     sync();
     const observer = new ResizeObserver(sync);
@@ -69,12 +78,12 @@ function MetricsBody() {
         ? prev
         : next,
     );
-  }, [fontFamily, metrics, lineBox]);
+  }, [fontFamily, metrics, lineBox, fontPx]);
 
   if (!result || !metrics || !fontFamily) return null;
 
   const em = Math.max(metrics.ascent - metrics.descent, 1);
-  const unit = FONT_PX / metrics.upm;
+  const unit = fontPx / metrics.upm;
   const halfLeading =
     lineBox > 0 ? Math.max((lineBox - em * unit) / 2, 0) : 0;
   const xHeight = metrics.xHeight ?? Math.round(metrics.cap * 0.7);

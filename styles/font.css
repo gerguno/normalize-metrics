@@ -9,6 +9,7 @@
   font-weight: 400;
   font-style: normal;
   font-display: swap;
+  font-feature-settings: "ss03" 1, "ss05" 1;
 }
 
 @font-face {

@@ -2,7 +2,7 @@
 status: Accepted
 owner: Oles
 reviewers: ["Oles"]
-updated_at: "2026-09-18"
+updated_at: "2026-09-21"
 feature_size: S
 ticket: ""
 ---
@@ -36,7 +36,7 @@ A Next.js tool will accept a font file, preview one word in a button with equal 
 
 ## Decision outcome
 
-**Chosen:** Option 2 — descender-symmetric extra, Win bbox envelope, typo = hhea, `USE_TYPO_METRICS` on, `lineGap = 0`. Signed off 2026-09-18.
+**Chosen:** Option 2 — descender-symmetric extra, Win bbox envelope, typo = hhea, `USE_TYPO_METRICS` on. Signed off 2026-09-18. Constant `lineGap = 0` is amended by ADR 0003: leftover original used height (`oldAscent + |oldDescent| + oldLineGap − content`) is written to `lineGap`; grow and zero gap only when that budget is too small.
 
 This is the smallest change that drives cap-center offset to ~0 on the macOS path the preview uses, without inflating every button to `Aring` height. Option 1 is the fallback if overflow-hidden buttons clip umlauts in real UI. Option 3 is what we are normalizing *away* from.
 
@@ -57,8 +57,8 @@ Inputs: a single static TTF/OTF/WOFF/WOFF2 face (variable fonts and TTC: v1 read
    - `descent = −round(extra)`  (hhea/typo descent is negative)
    - Cap-center offset = `((ascent − cap) − |descent|) / 2` → 0 by construction
 4. **Write tables** (outlines unchanged):
-   - `hhea.ascent/descent/lineGap = ascent, descent, 0`
-   - `OS/2.sTypoAscender/Descender/LineGap = ascent, descent, 0`
+   - `hhea.ascent/descent = ascent, descent`; `lineGap` per ADR 0003 (leftover used height, else 0)
+   - `OS/2.sTypoAscender/Descender = ascent, descent`; `sTypoLineGap` same as `hhea.lineGap`
    - `OS/2.fsSelection |= USE_TYPO_METRICS` (bit 7)
    - `OS/2.usWinAscent = max(ascent, bbox_yMax)` (positive)
    - `OS/2.usWinDescent = max(|descent|, −bbox_yMin)` (positive)
@@ -87,7 +87,7 @@ winAscent  = max(ascent,  bbox.yMax)
 winDescent = max(extra,  −bbox.yMin)
 typo       = hhea
 USE_TYPO_METRICS = 1
-lineGap    = 0
+lineGap    = per ADR 0003
 outlines   = unchanged
 ```
 
@@ -100,7 +100,7 @@ outlines   = unchanged
 - Matches the research definition of cap-center offset.
 
 **Negative**
-- Line box usually grows (`DIN` 1000 → ~1336 UPM units). The button gets taller unless the UI also sets `text-box-trim`. That is honest: the cellar was always there optically, we moved half of it above the caps.
+- When original used height cannot pay for `cap + 2 × extra`, the line box still grows (`DIN` 1000 → ~1336 if `lineGap` was 0). ADR 0003 spends table leading first so `line-height: normal` does not loosen when the budget exists.
 - Umlauts taller than `Adieresis` (e.g. `Aring`) can paint above the hhea box. Fine unless the button uses `overflow: hidden`.
 - `head.yMin` can be pessimistic (a single comma or Vietnamese hook inflates extra for the whole face).
 - Editing a licensed font and redistributing the download may violate the EULA. The app must say that; it does not legalize the file.
@@ -113,6 +113,7 @@ outlines   = unchanged
 ## Links
 
 - Related ADR: [[0002-ship-gui-and-cli-on-one-engine]]
+- Related ADR: [[0003-spend-leading-before-growing-the-line-box]] (amends `lineGap = 0`)
 - Research (replaces missing spec): [[../button-vertical-metrics.html]]
 - Extractor: [[../extract_vertical_metrics.py]]
 - Spec: none yet — no `docs/spec.md`

@@ -5,7 +5,6 @@ export type TriedId = "unica77" | "america" | "ritma";
 export type TriedFont = {
   id: TriedId;
   label: string;
-  family: string;
   originalUrl: string;
   normalizedUrl: string;
   fileName: string;
@@ -16,8 +15,7 @@ export type TriedFont = {
 export const TRIED_FONTS: TriedFont[] = [
   {
     id: "unica77",
-    label: "Unica77",
-    family: "Unica77",
+    label: "Unica77 LL",
     originalUrl: "/test/Unica77LL-Regular.otf",
     normalizedUrl: "/test/Unica77LL-Regular-normalized.otf",
     fileName: "Unica77LL-Regular-normalized.otf",
@@ -48,8 +46,7 @@ export const TRIED_FONTS: TriedFont[] = [
   },
   {
     id: "america",
-    label: "America",
-    family: "America",
+    label: "GT America",
     originalUrl: "/test/GT-America-Regular.otf",
     normalizedUrl: "/test/GT-America-Regular-normalized.otf",
     fileName: "GT-America-Regular-normalized.otf",
@@ -67,21 +64,20 @@ export const TRIED_FONTS: TriedFont[] = [
     },
     after: {
       upm: 1000,
-      ascent: 949,
-      descent: -239,
+      ascent: 957,
+      descent: -248,
       cap: 710,
       xHeight: 500,
-      above: 239,
-      below: 239,
-      offset: 0,
+      above: 247,
+      below: 248,
+      offset: -0.5,
       centered: 100,
       grade: "Great",
     },
   },
   {
     id: "ritma",
-    label: "Ritma",
-    family: "Ritma",
+    label: "BST Ritma",
     originalUrl: "/test/RitmaUnlicencedTrial-Regular.otf",
     normalizedUrl: "/test/RitmaUnlicencedTrial-Regular-normalized.otf",
     fileName: "RitmaUnlicencedTrial-Regular-normalized.otf",

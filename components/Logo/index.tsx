@@ -1,71 +1,160 @@
 "use client";
 
+import {
+  useEffect,
+  useId,
+  useRef,
+  useState,
+  type CSSProperties,
+  type PointerEvent,
+} from "react";
 import { cn } from "@/utils/cn";
+import textStyles from "@/styles/typography.module.scss";
 import styles from "./index.module.scss";
 
 export type LogoProps = {
-  menuOpen?: boolean;
-  onToggleMenu?: () => void;
+  width?: number | "auto";
+  height?: number | "auto";
+  borderRadius?: number;
+  logoOnly?: boolean;
+  inverted?: boolean;
+  animated?: boolean;
+  href?: string;
   className?: string;
+  "aria-label"?: string;
 };
 
+const VIEWBOX_SIZE = 24;
+const LAYERS = 6;
+const RECT_COUNT = LAYERS + 1; // фон + шари
+const DURATION_MS = 700;
+const STAGGER = 0.1; // частка від DURATION_MS між сусідніми rect'ами
+const TOTAL_MS = DURATION_MS * (1 + (RECT_COUNT - 1) * STAGGER);
+
 export default function Logo({
-  menuOpen = false,
-  onToggleMenu,
+  width = "auto",
+  height = "auto",
+  borderRadius = 0,
+  logoOnly = false,
+  inverted = false,
+  animated = false,
+  href = "https://olesgergun.com",
   className,
+  "aria-label": ariaLabel = "Oles Gergun",
 }: LogoProps) {
+  const maskId = useId();
+  const [active, setActive] = useState(false);
+  const hoveredRef = useRef(false);
+  const playingRef = useRef(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(
+    () => () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    },
+    [],
+  );
+
+  const handleEnter = (event: PointerEvent<HTMLAnchorElement>) => {
+    if (event.pointerType !== "mouse") return; // без hover на тачі
+    hoveredRef.current = true;
+    if (playingRef.current) return; // вже грає вперед, не чіпаємо
+
+    playingRef.current = true;
+    setActive(true);
+    timerRef.current = setTimeout(() => {
+      playingRef.current = false;
+      if (!hoveredRef.current) setActive(false);
+    }, TOTAL_MS);
+  };
+
+  const handleLeave = () => {
+    hoveredRef.current = false;
+    // якщо ще грає, клас зніме таймер після дограшу
+    if (!playingRef.current) setActive(false);
+  };
+
+  const center = VIEWBOX_SIZE / 2;
+  const baseInnerSize = VIEWBOX_SIZE / 2;
+  const sizes = Array.from(
+    { length: LAYERS },
+    (_, i) => baseInnerSize / 2 ** i,
+  );
+  const svgWidth = width === "auto" ? "100%" : width;
+  const svgHeight = height === "auto" ? "100%" : height;
+
+  const renderedSize =
+    typeof width === "number"
+      ? width
+      : typeof height === "number"
+        ? height
+        : null;
+  const maskRadius = renderedSize
+    ? (borderRadius * VIEWBOX_SIZE) / renderedSize
+    : borderRadius;
+
+  const rootStyle = {
+    ...(width !== "auto" && { width }),
+    ...(height !== "auto" && { height }),
+    "--logo-duration": `${DURATION_MS}ms`,
+    "--logo-stagger": STAGGER,
+  } as CSSProperties;
+
   return (
-    <div className={cn(styles.root, className)}>
-      <a className={styles.mark} href="/" aria-label="Rhizome">
-        <svg
-          className={styles.glyph}
-          width="96"
-          height="96"
-          viewBox="0 0 96 96"
-          fill="none"
-          aria-hidden="true"
-        >
-          <rect width="96" height="96" fill="white" />
-          <path d="M48.6853 47.3056H47.3073V48.6835H48.6853V47.3056Z" fill="#202020" />
-          <path
-            fillRule="evenodd"
-            clipRule="evenodd"
-            d="M50.9043 45.0972H45.0095V50.992H50.9043V45.0972ZM49.4568 46.5417H46.5477V49.4508H49.4568V46.5417Z"
-            fill="#202020"
-          />
-          <path
-            fillRule="evenodd"
-            clipRule="evenodd"
-            d="M36.2066 36.2222H59.8374V59.853H36.2066V36.2222ZM42.1102 42.0972H53.9256V53.9126H42.1102V42.0972Z"
-            fill="#202020"
-          />
-          <path
-            fillRule="evenodd"
-            clipRule="evenodd"
-            d="M0 0H96V96H0V0ZM24.3464 24.3333H71.6079V71.5949H24.3464V24.3333Z"
-            fill="#202020"
-          />
-        </svg>
-      </a>
-      <button
-        className={styles.menu}
-        type="button"
-        aria-label={menuOpen ? "Close menu" : "Open menu"}
-        aria-expanded={menuOpen}
-        onClick={onToggleMenu}
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={cn(
+        styles.root,
+        active && styles.active,
+        inverted && styles.inverted,
+        className,
+      )}
+      style={rootStyle}
+      aria-label={ariaLabel}
+      onPointerEnter={animated ? handleEnter : undefined}
+      onPointerLeave={animated ? handleLeave : undefined}
+    >
+      <svg
+        width={svgWidth}
+        height={svgHeight}
+        viewBox={`0 0 ${VIEWBOX_SIZE} ${VIEWBOX_SIZE}`}
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
       >
-        <span className={styles.lines} aria-hidden="true">
-          {menuOpen ? (
-            <i className={styles.line} />
-          ) : (
-            <>
-              <i className={styles.line} />
-              <i className={styles.line} />
-              <i className={styles.line} />
-            </>
-          )}
-        </span>
-      </button>
-    </div>
+        <defs>
+          <mask
+            id={maskId}
+            maskUnits="userSpaceOnUse"
+            x="0"
+            y="0"
+            width={VIEWBOX_SIZE}
+            height={VIEWBOX_SIZE}
+          >
+            <rect
+              width={VIEWBOX_SIZE}
+              height={VIEWBOX_SIZE}
+              rx={maskRadius}
+              fill="white"
+            />
+          </mask>
+        </defs>
+        <g mask={`url(#${maskId})`}>
+          <rect width={VIEWBOX_SIZE} height={VIEWBOX_SIZE} />
+          {sizes.map((size, index) => (
+            <rect
+              key={index}
+              x={center - size / 2}
+              y={center - size / 2}
+              width={size}
+              height={size}
+            />
+          ))}
+        </g>
+      </svg>
+      {!logoOnly && <span className={textStyles.bodySm}>Oles Gergun</span>}
+    </a>
   );
 }

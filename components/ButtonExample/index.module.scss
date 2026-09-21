@@ -1,4 +1,5 @@
-.root {}
+.root {
+}
 
 .wrap {
   position: relative;
@@ -9,7 +10,7 @@
 .pill {
   width: fit-content;
   padding: 42px 30px;
-  border-radius: 28.379px;
+  border-radius: var(--space-xl);
   overflow: hidden;
   background: var(--color-background-muted);
   position: relative;
@@ -34,13 +35,13 @@
 }
 
 .good {
-  background: rgba(48, 164, 108, 0.15);
+  background: var(--color-secondary-green-fill);
   border-color: var(--color-secondary-green);
   color: var(--color-secondary-green-contrast);
 }
 
 .bad {
-  background: rgba(229, 72, 77, 0.15);
+  background: var(--color-secondary-red-fill);
   border-color: var(--color-secondary-red);
   color: var(--color-secondary-red-contrast);
 }

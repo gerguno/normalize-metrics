@@ -1,10 +1,12 @@
-.root {}
+.root {
+}
 
 .quote {
   width: 336px;
+  max-width: calc(100% - 2 * var(--space-xl));
   padding: var(--space-xl);
   border-radius: var(--space-xl);
-  background: var(--color-background-muted);
+  background: transparent;
   position: relative;
   overflow: hidden;
 }
@@ -35,22 +37,40 @@
   flex: none;
 }
 
-.lineOver {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: calc(var(--over) * 1lh);
-  border-bottom: 1px dashed var(--color-secondary-pink);
-  background: rgba(214, 64, 159, 0.15);
-}
-
+.lineOver,
 .lineUnder {
   position: absolute;
   left: 0;
   right: 0;
+}
+
+.lineOver {
+  top: var(--lead, 0px);
+  height: var(--over);
+  background: var(--color-secondary-purple-fill);
+}
+
+.lineUnder {
+  bottom: var(--lead, 0px);
+  height: var(--under);
+  background: var(--color-secondary-pink-fill);
+}
+
+.lineOver::after,
+.lineUnder::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 0;
+}
+
+.lineOver::after {
   bottom: 0;
-  height: calc(var(--under) * 1lh);
-  border-top: 1px dashed var(--color-secondary-purple);
-  background: rgba(142, 78, 198, 0.15);
+  border-bottom: 1px dashed var(--color-secondary-purple);
+}
+
+.lineUnder::before {
+  top: 0;
+  border-top: 1px dashed var(--color-secondary-pink);
 }

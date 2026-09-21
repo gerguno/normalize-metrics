@@ -5,6 +5,7 @@ import { emptyConfig, findConfig, mergeConfig } from "./config.ts";
 import { discover, discoverFromInclude } from "./discover.ts";
 import { runEngine } from "./engine.ts";
 import { formatOffset, outputPath } from "./paths.ts";
+import { formatReports } from "./report.ts";
 import { ProgressStack } from "./progress.ts";
 import { EULA, invocationDir, packageVersion, resolvePython } from "./runtime.ts";
 import { pathExists } from "./fs-exists.ts";
@@ -226,6 +227,9 @@ export async function main(argv = process.argv.slice(2)): Promise<number> {
   await stack.finish();
   process.off("SIGINT", onInterrupt);
   process.off("SIGTERM", onInterrupt);
+
+  const reports = formatReports(outcomes);
+  if (reports) process.stdout.write(`\n${reports}\n`);
 
   const summary = summarize(outcomes, mode);
   if (summary) {

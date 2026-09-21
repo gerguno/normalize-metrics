@@ -5,13 +5,14 @@ import {
   useContext,
   useEffect,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import Button from "@/components/Button";
 import Toggle from "@/components/Toggle";
-import { usePrefersReducedMotion } from "@/lib/usePrefersReducedMotion";
+import { usePrefersReducedMotion } from "@/utils/usePrefersReducedMotion";
 import type { Metrics, NormalizeResult } from "@/lib/types";
 import { cn } from "@/utils/cn";
 import textStyles from "@/styles/typography.module.scss";
@@ -23,6 +24,8 @@ const FADE_EASE = [0.2, 0, 0, 1] as const;
 export type ExampleDataProps = {
   result: NormalizeResult | null;
   loading?: boolean;
+  disabled?: boolean;
+  name?: string;
 };
 
 export type ExampleProps = ExampleDataProps & {
@@ -76,15 +79,19 @@ function viewValue(
 export default function Example({
   result,
   loading = false,
+  disabled = false,
   compact = false,
-  eyebrow,
+  name,
+  eyebrow = name ?? result?.family,
   title,
   className,
   children,
 }: ExampleProps) {
   const reduceMotion = usePrefersReducedMotion();
-  const [afterView, setAfterView] = useState(true);
+  const rootRef = useRef<HTMLElement>(null);
+  const [afterView, setAfterView] = useState(false);
   const [playing, setPlaying] = useState(true);
+  const [inView, setInView] = useState(false);
   const [canAnimate, setCanAnimate] = useState(false);
   const duration = reduceMotion || !canAnimate ? 0 : 0.35;
   const fade = { duration, ease: FADE_EASE };
@@ -98,12 +105,29 @@ export default function Example({
   }, [reduceMotion]);
 
   useEffect(() => {
-    if (!playing || loading || !result) return;
+    const el = rootRef.current;
+    if (!el) return;
+
+    // Top half of the viewport: fires when the card's top reaches screen center.
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        const visible = entry.isIntersecting;
+        setInView(visible);
+        if (visible) setAfterView(true);
+      },
+      { rootMargin: "0px 0px -50% 0px", threshold: 0 },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!playing || !inView || loading || disabled || !result) return;
     const id = window.setInterval(() => {
       setAfterView((value) => !value);
     }, AUTOPLAY_MS);
     return () => window.clearInterval(id);
-  }, [playing, loading, result]);
+  }, [playing, inView, loading, disabled, result]);
 
   const live = useMemo(
     () => viewValue(result, afterView, loading, setAfterView),
@@ -114,6 +138,7 @@ export default function Example({
   return (
     <ExampleContext.Provider value={live}>
       <article
+        ref={rootRef}
         className={cn(
           styles.root,
           compact ? styles.compact : styles.tall,

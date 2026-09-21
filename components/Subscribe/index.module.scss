@@ -2,12 +2,26 @@
 
 .root {
   width: 100%;
-  background: var(--color-background);
+  background: var(--color-sidebar);
   border-radius: var(--radius-m);
   padding: var(--space-l);
   display: flex;
   flex-direction: column;
   gap: var(--space-l);
+  opacity: 1;
+  transition: opacity 0.35s cubic-bezier(0.2, 0, 0, 1) 0.35s;
+
+  :global(html[data-menu-open="true"]) & {
+    opacity: 0.2;
+    pointer-events: none;
+    transition-delay: 0s;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .root {
+    transition: none;
+  }
 }
 
 @include xl {
@@ -29,4 +43,8 @@
 
 .legal {
   color: var(--color-secondary);
+}
+
+.error {
+  color: var(--color-secondary-red-contrast);
 }

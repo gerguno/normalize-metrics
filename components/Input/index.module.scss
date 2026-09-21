@@ -25,6 +25,8 @@
   background: var(--color-background);
   outline: none;
   transition: border-color 0.2s ease;
+  text-box-trim: none;
+  line-height: calc(var(--space-ui-element-height) - 2px);
 
   &::placeholder {
     color: var(--color-secondary);

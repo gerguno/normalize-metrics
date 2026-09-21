@@ -5,8 +5,8 @@ import Example, {
   useExample,
   type ExampleDataProps,
 } from "@/components/Example";
-import { isCenteredGood } from "@/lib/centered";
-import { guideAligns, type GuideAlign } from "@/lib/guideAlign";
+import { isCenteredGood } from "@/utils/centered";
+import { guideAligns, type GuideAlign } from "@/utils/guideAlign";
 import { cn } from "@/utils/cn";
 import textStyles from "@/styles/typography.module.scss";
 import styles from "./index.module.scss";
@@ -15,13 +15,19 @@ const SAMPLE = "Button";
 const FONT_PX = 51.437;
 const PAD_BLOCK = 42;
 
-export default function ButtonExample({ result, loading }: ExampleDataProps) {
+export default function ButtonExample({
+  result,
+  loading,
+  disabled,
+  name,
+}: ExampleDataProps) {
   return (
     <Example
       className={styles.root}
       result={result}
       loading={loading}
-      eyebrow="Analysis"
+      disabled={disabled}
+      name={name}
       title="Within a button"
     >
       <ButtonBody />

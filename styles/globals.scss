@@ -14,9 +14,10 @@ body {
 }
 
 body {
-  background: var(--color-sidebar);
+  background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-ui);
+  font-feature-settings: var(--font-ui-features);
   font-size: 14px;
   line-height: 1.35;
   font-synthesis: none;
@@ -55,15 +56,4 @@ textarea {
 a {
   color: inherit;
   cursor: pointer;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  text-decoration-color: currentColor;
-  text-underline-position: from-font;
-  transition: text-decoration-color 0.2s linear;
-
-  @include hover-supported {
-    &:hover {
-      text-decoration-color: transparent;
-    }
-  }
 }

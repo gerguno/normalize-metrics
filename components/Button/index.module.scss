@@ -11,6 +11,8 @@
   border: 0;
   border-radius: var(--radius-s);
   background-color: transparent;
+  color: inherit;
+  text-decoration: none;
   cursor: pointer;
   white-space: nowrap;
   transition:
@@ -89,10 +91,11 @@
   width: var(--space-xl);
   padding: 0;
   background-color: var(--color-foreground);
-  color: var(--color-background);
+  color: var(--color-secondary);
 
   @include hover-supported {
     &:not(:disabled):hover {
+      color: var(--color-background);
       background-color: color-mix(in srgb, var(--color-foreground) 88%, white);
     }
   }

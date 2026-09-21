@@ -1,0 +1,47 @@
+.wrap {
+  display: grid;
+  overflow: hidden;
+}
+
+.clip {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  padding-top: var(--menu-gap, var(--space-3xl));
+  padding-bottom: 0.4em;
+}
+
+.prompt {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--color-foreground);
+}
+
+.promptMuted {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  color: var(--color-secondary);
+}
+
+.path {
+  display: flex;
+  align-items: center;
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 9px var(--space-xl);
+}
+
+.link {
+  color: var(--color-foreground);
+}

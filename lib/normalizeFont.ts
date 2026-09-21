@@ -64,7 +64,7 @@ export async function normalizeFont(file: File): Promise<NormalizeResult> {
 
 export function loadTriedFont(tried: TriedFont) {
   return loadPair(tried.originalUrl, tried.normalizedUrl, {
-    family: tried.family,
+    family: tried.label,
     fileName: tried.fileName,
     mime: "font/otf",
     before: tried.before,

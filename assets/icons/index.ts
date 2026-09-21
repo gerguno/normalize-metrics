@@ -6,6 +6,8 @@ import { CheckmarkIcon } from "./Checkmark";
 import { CopyIcon } from "./Copy";
 import { CubeIcon } from "./Cube";
 import { DownloadIcon } from "./Download";
+import { GithubIcon } from "./Github";
+import { NpmIcon } from "./Npm";
 import { PauseIcon } from "./Pause";
 import { PlayIcon } from "./Play";
 import { UploadIcon } from "./Upload";
@@ -16,6 +18,8 @@ export const iconRegistry = {
   copy: CopyIcon,
   cube: CubeIcon,
   download: DownloadIcon,
+  github: GithubIcon,
+  npm: NpmIcon,
   pause: PauseIcon,
   play: PlayIcon,
   upload: UploadIcon,

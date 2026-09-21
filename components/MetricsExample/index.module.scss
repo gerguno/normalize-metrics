@@ -1,4 +1,7 @@
-.root {}
+@import "@/styles/responsives";
+
+.root {
+}
 
 .wrap {
   position: relative;
@@ -11,7 +14,7 @@
   inset: 0;
   z-index: 0;
   border-radius: var(--space-xl);
-  background: var(--color-sidebar);
+  background: transparent;
   overflow: hidden;
 }
 
@@ -23,6 +26,10 @@
   font-size: 186px;
   line-height: normal;
   text-box-trim: none;
+
+  @include to-s {
+    font-size: 164px;
+  }
 }
 
 .leftoverTop,
@@ -33,11 +40,11 @@
 }
 
 .leftoverTop {
-  background: rgba(142, 78, 198, 0.15);
+  background: var(--color-secondary-purple-fill);
 }
 
 .leftoverBottom {
-  background: rgba(214, 64, 159, 0.15);
+  background: var(--color-secondary-pink-fill);
 }
 
 .guideLayer {
@@ -83,6 +90,10 @@
 
 .guideLabel {
   right: calc(100% + var(--space-xs));
+
+  @include to-s {
+    display: none;
+  }
 }
 
 .guideValue {

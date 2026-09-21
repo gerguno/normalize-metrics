@@ -1,20 +1,23 @@
 "use client";
 
 import Example, { useExample, type ExampleDataProps } from "@/components/Example";
-import { isCenteredGood } from "@/lib/centered";
+import { isCenteredGood } from "@/utils/centered";
 import styles from "./index.module.scss";
 
 export default function SummaryExample({
   result,
   loading,
+  disabled,
+  name,
 }: ExampleDataProps) {
   return (
     <Example
       className={styles.root}
       result={result}
       loading={loading}
+      disabled={disabled}
+      name={name}
       compact
-      eyebrow={result?.family}
       title={<SummaryTitle />}
     />
   );

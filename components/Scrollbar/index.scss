@@ -1,0 +1,16 @@
+.os-scrollbar.os-theme-minimal {
+  --os-size: 14px;
+  --os-padding-perpendicular: 4px;
+  --os-padding-axis: 8px;
+  --os-track-bg: none;
+  --os-track-bg-hover: none;
+  --os-track-bg-active: none;
+  --os-handle-bg: var(--color-foreground);
+  --os-handle-bg-hover: var(--color-foreground);
+  --os-handle-bg-active: var(--color-foreground);
+  --os-handle-border-radius: 999px;
+  --os-track-border-radius: 999px;
+  --os-handle-interactive-area-offset: 4px;
+  --os-handle-min-size: 32px;
+  z-index: 9;
+}

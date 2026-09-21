@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Rewrite vertical metrics per ADR 0001. Outlines stay unchanged."""
+"""Rewrite vertical metrics per ADR 0001 and 0003. Outlines stay unchanged."""
 
 from __future__ import annotations
 
@@ -128,16 +128,49 @@ def set_name_suffix(font: TTFont, suffix: str = " Normalized") -> None:
         name.setName(new, rec.nameID, rec.platformID, rec.platEncID, rec.langID)
 
 
-def tables_off(font: TTFont, ascent: int, descent: int, win_ascent: int, win_descent: int) -> bool:
+def target_line_box(
+    cap: int,
+    extra: int,
+    old_ascent: int,
+    old_descent: int,
+    old_line_gap: int,
+) -> tuple[int, int, int]:
+    """ADR 0003: center in the old content box when it already fits.
+
+    Do not invent lineGap. Spend existing table gap only when content must grow
+    into it. Grow used height only when even that is not enough.
+    """
+    extra = int(round(extra))
+    needed = cap + 2 * extra
+    old_content = old_ascent + abs(old_descent)
+    used_before = old_content + old_line_gap
+    if needed <= old_content:
+        pad = old_content - cap
+        above = pad // 2
+        below = pad - above
+        return cap + above, -below, old_line_gap
+    if needed <= used_before:
+        return cap + extra, -extra, used_before - needed
+    return cap + extra, -extra, 0
+
+
+def tables_off(
+    font: TTFont,
+    ascent: int,
+    descent: int,
+    win_ascent: int,
+    win_descent: int,
+    line_gap: int,
+) -> bool:
     hhea = font["hhea"]
     os2 = font["OS/2"]
     return not (
         hhea.ascent == ascent
         and hhea.descent == descent
-        and hhea.lineGap == 0
+        and hhea.lineGap == line_gap
         and os2.sTypoAscender == ascent
         and os2.sTypoDescender == descent
-        and os2.sTypoLineGap == 0
+        and os2.sTypoLineGap == line_gap
         and bool(os2.fsSelection & USE_TYPO_METRICS)
         and os2.usWinAscent == win_ascent
         and os2.usWinDescent == win_descent
@@ -163,20 +196,22 @@ def normalize(font: TTFont, progress: Progress | None = None) -> dict:
     descender_depth = -min(mins)
     accent_typical = max(0, adieresis[1] - cap) if adieresis else 0
     extra = max(descender_depth, accent_typical, 0)
-    ascent = int(round(cap + extra))
-    descent = -int(round(extra))
+    hhea = font["hhea"]
+    ascent, descent, line_gap = target_line_box(
+        cap, extra, hhea.ascent, hhea.descent, hhea.lineGap
+    )
     win_ascent = max(ascent, bbox_y_max, 0)
     win_descent = max(-descent, -bbox_y_min, 0)
-    off = tables_off(font, ascent, descent, win_ascent, win_descent)
+    off = tables_off(font, ascent, descent, win_ascent, win_descent, line_gap)
     before = snapshot(font, cap, ex)
 
     emit(progress, 85, "rewriting")
     font["hhea"].ascent = ascent
     font["hhea"].descent = descent
-    font["hhea"].lineGap = 0
+    font["hhea"].lineGap = line_gap
     os2.sTypoAscender = ascent
     os2.sTypoDescender = descent
-    os2.sTypoLineGap = 0
+    os2.sTypoLineGap = line_gap
     os2.fsSelection |= USE_TYPO_METRICS
     os2.usWinAscent = win_ascent
     os2.usWinDescent = win_descent
