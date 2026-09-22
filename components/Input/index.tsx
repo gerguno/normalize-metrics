@@ -7,7 +7,7 @@ import styles from "./index.module.scss";
 
 export type InputSize = "s" | "m";
 
-export type InputProps = InputHTMLAttributes<HTMLInputElement> & {
+export type InputProps = Omit<InputHTMLAttributes<HTMLInputElement>, "size"> & {
   label?: ReactNode;
   size?: InputSize;
 };
