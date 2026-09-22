@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Button from "@/components/Button";
+import Reveal from "@/components/Reveal";
 import ButtonExample from "@/components/ButtonExample";
 import CodeChip from "@/components/CodeChip";
 import CodeFile from "@/components/CodeFile";
@@ -173,11 +174,10 @@ export default function ProjectPage() {
               <p className={cn(styles.copy, textStyles.bodyMd)}>
                 The text within a button is not always centered vertically. That
                 is the font’s fault, not yours. You can trim the line box in CSS
-                with{" "}
-                <CodeChip>text-box: trim-both cap alphabetic</CodeChip>. That property became a cross-browser option on
-                August 18, 2026, when Firefox adopted it. The default is still
-                the untrimmed box, and component kits were written for that
-                default.
+                with <CodeChip>text-box: trim-both cap alphabetic</CodeChip>.
+                That property became a cross-browser option on August 18, 2026,
+                when Firefox adopted it. The default is still the untrimmed box,
+                and component kits were written for that default.
               </p>
               <p className={cn(styles.copy, textStyles.bodyMd)}>
                 Trim cuts descenders. An input, a textarea, or any box that
@@ -246,72 +246,74 @@ export default function ProjectPage() {
                     ))}
                   </div>
                 </div>
-                <Button
-                  variant="secondary"
-                  fullWidth
-                  icon="upload"
-                  disabled={uploading}
-                  aria-busy={uploading}
-                  onClick={() => inputRef.current?.click()}
-                >
-                  {uploading
-                    ? "Uploading and normalizing..."
-                    : "Upload your font"}
-                </Button>
-                <input
-                  ref={inputRef}
-                  type="file"
-                  hidden
-                  disabled={uploading}
-                  accept=".ttf,.otf,.woff,.woff2,.ttc"
-                  onChange={(event) => {
-                    const file = event.target.files?.[0];
-                    if (file) void handleFile(file);
-                    event.target.value = "";
-                  }}
-                />
-                {error ? (
-                  <p className={cn(styles.error, textStyles.bodySm)}>{error}</p>
-                ) : null}
-                <div
-                  className={cn(
-                    styles.examples,
-                    uploading && styles.examplesBusy,
-                  )}
-                  inert={uploading || undefined}
-                  aria-busy={uploading}
-                >
-                  {result?.blob && !loading ? (
+                <div className={styles.actions}>
+                  <Button
+                    variant="secondary"
+                    fullWidth
+                    icon="upload"
+                    disabled={uploading}
+                    aria-busy={uploading}
+                    onClick={() => inputRef.current?.click()}
+                  >
+                    {uploading
+                      ? "Uploading and normalizing..."
+                      : "Upload your font"}
+                  </Button>
+                  <input
+                    ref={inputRef}
+                    type="file"
+                    hidden
+                    disabled={uploading}
+                    accept=".ttf,.otf,.woff,.woff2,.ttc"
+                    onChange={(event) => {
+                      const file = event.target.files?.[0];
+                      if (file) void handleFile(file);
+                      event.target.value = "";
+                    }}
+                  />
+                  {error ? (
+                    <p className={cn(styles.error, textStyles.bodySm)}>
+                      {error}
+                    </p>
+                  ) : null}
+                  <Reveal show={Boolean(result?.blob) && !loading}>
                     <Button
-                      variant="secondary"
+                      variant="primary"
                       icon="download"
                       fullWidth
+                      disabled={uploading}
                       onClick={download}
                     >
                       Download
                     </Button>
-                  ) : null}
+                  </Reveal>
+                </div>
+                <div
+                  className={styles.examples}
+                  inert={uploading || undefined}
+                  aria-busy={uploading}
+                >
                   <SummaryExample
                     result={result}
-                    loading={loading}
+                    loading={loading || uploading}
                     disabled={uploading}
                     name={fontName}
                   />
                   <MetricsExample
                     result={result}
-                    loading={loading}
+                    loading={loading || uploading}
                     disabled={uploading}
                     name={fontName}
                   />
                   <ButtonExample
                     result={result}
-                    loading={loading}
+                    loading={loading || uploading}
                     disabled={uploading}
                     name={fontName}
                   />
                   <TextExample
                     result={result}
-                    loading={loading}
+                    loading={loading || uploading}
                     disabled={uploading}
                     name={fontName}
                   />
@@ -397,11 +399,10 @@ export default function ProjectPage() {
             Follow me on X
           </TextLink>
           <p>
-            © As a part of Rhizome project by{" "}
+            © 2026 As a part of Rhizome project by{" "}
             <TextLink href="https://olesgergun.com" target="_blank">
               Oles Gergun
             </TextLink>
-            , 2026
           </p>
         </div>
       </div>

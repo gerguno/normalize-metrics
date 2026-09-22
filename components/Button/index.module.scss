@@ -83,12 +83,13 @@
 .quaternary {
   width: var(--space-xl);
   padding: 0;
-  color: var(--color-border-solid);
+  overflow: hidden;
+  color: var(--color-secondary);
 
   @include hover-supported {
     &:not(:disabled):hover {
       background-color: var(--color-hover-dark);
-      color: var(--color-secondary);
+      color: var(--color-foreground);
     }
   }
 }
@@ -110,6 +111,7 @@
   height: var(--space-ui-element-height-md);
   min-height: var(--space-ui-element-height-md);
   padding: 0 var(--space-m);
+  gap: var(--space-s);
 }
 
 .quaternary.sizeM,

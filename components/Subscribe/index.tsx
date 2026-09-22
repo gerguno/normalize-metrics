@@ -1,9 +1,11 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { motion } from "motion/react";
 import Button from "@/components/Button";
 import Input from "@/components/Input";
 import { cn } from "@/utils/cn";
+import { usePrefersReducedMotion } from "@/utils/usePrefersReducedMotion";
 import textStyles from "@/styles/typography.module.scss";
 import styles from "./index.module.scss";
 
@@ -18,6 +20,7 @@ export default function Subscribe() {
   const emailOk = EMAIL.test(email);
   const submitting = status === "submitting";
   const disabled = submitting;
+  const reduceMotion = usePrefersReducedMotion();
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
@@ -47,43 +50,54 @@ export default function Subscribe() {
   }
 
   return (
-    <form className={styles.root} onSubmit={onSubmit}>
-      <p className={textStyles.bodyMd}>Subscribe for new stuff</p>
-      <div className={styles.fields}>
-        <Input
-          type="email"
-          name="email"
-          size="m"
-          autoComplete="email"
-          placeholder="Enter your e-mail"
-          value={email}
-          disabled={disabled}
-          onChange={(event) => {
-            setStatus("idle");
-            setError("");
-            setEmail(event.target.value);
-          }}
-        />
-        <Button
-          type="submit"
-          variant="primary"
-          size="m"
-          fullWidth
-          icon={status === "subscribed" ? "checkmark" : undefined}
-          disabled={!emailOk || disabled || status === "subscribed"}
-        >
-          {status === "subscribed"
-            ? "Subscribed"
-            : submitting
-              ? "Subscribing..."
-              : "Subscribe"}
-        </Button>
-        {error ? (
-          <p className={cn(styles.error, textStyles.bodyMd)} aria-live="polite">
-            {error}
-          </p>
-        ) : null}
-      </div>
-    </form>
+    <motion.div
+      className={styles.stage}
+      initial={reduceMotion ? false : { opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.6 }}
+      transition={{ duration: 0.5, ease: [0.2, 0, 0, 1] }}
+    >
+      <form className={styles.root} onSubmit={onSubmit}>
+        <p className={textStyles.bodyMd}>Subscribe for new stuff</p>
+        <div className={styles.fields}>
+          <Input
+            type="email"
+            name="email"
+            size="m"
+            autoComplete="email"
+            placeholder="Enter your e-mail"
+            value={email}
+            disabled={disabled}
+            onChange={(event) => {
+              setStatus("idle");
+              setError("");
+              setEmail(event.target.value);
+            }}
+          />
+          <Button
+            type="submit"
+            variant="primary"
+            size="m"
+            fullWidth
+            icon={status === "subscribed" ? "checkmark" : undefined}
+            disabled={!emailOk || disabled || status === "subscribed"}
+          >
+            {status === "subscribed"
+              ? "Subscribed"
+              : submitting
+                ? "Subscribing..."
+                : "Subscribe"}
+          </Button>
+          {error ? (
+            <p
+              className={cn(styles.error, textStyles.bodyMd)}
+              aria-live="polite"
+            >
+              {error}
+            </p>
+          ) : null}
+        </div>
+      </form>
+    </motion.div>
   );
 }

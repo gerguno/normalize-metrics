@@ -1,7 +1,31 @@
 @import "@/styles/responsives";
 
+.stage {
+  width: 100%;
+}
+
 .root {
   width: 100%;
+  // Opposite of the page, so the card reads as a separate surface.
+  color-scheme: dark;
+  --color-background: #191919;
+  --color-foreground: #eeeeee;
+  --color-secondary: #7b7b7b;
+  --color-focus: var(--color-foreground);
+  --color-secondary-red-contrast: #ff9592;
+  --color-border: color-mix(in srgb, var(--color-foreground) 12%, transparent);
+  --color-border-solid: color-mix(
+    in srgb,
+    var(--color-foreground) 12%,
+    var(--color-background)
+  );
+  --color-hover-dark: color-mix(
+    in srgb,
+    var(--color-foreground) 4%,
+    transparent
+  );
+  --shadow-outer: 1px 2px 2px color-mix(in srgb, #000000 16%, transparent);
+  color: var(--color-foreground);
   background: var(--color-background);
   border: var(--stroke) solid var(--color-border-solid);
   border-radius: var(--radius-m);
@@ -20,6 +44,14 @@
   }
 }
 
+:global(html[data-theme="dark"]) .root {
+  color-scheme: light;
+  --color-background: #ffffff;
+  --color-foreground: #202020;
+  --color-secondary: #838383;
+  --color-secondary-red-contrast: #ce2c31;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .root {
     transition: none;
@@ -27,7 +59,7 @@
 }
 
 @include xl {
-  .root {
+  .stage {
     position: fixed;
     inset-inline-end: var(--space-l);
     inset-block-end: var(--space-l);
@@ -40,7 +72,7 @@
 .fields {
   display: flex;
   flex-direction: column;
-  gap: var(--space-xs);
+  gap: var(--space-m);
 }
 
 .legal {

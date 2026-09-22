@@ -2,13 +2,15 @@
 
 .root {
   position: relative;
-  width: 51px;
+  width: 56px;
   height: 28px;
   padding: 0;
-  border: 1px solid var(--color-border);
+  border: 0;
   border-radius: 999px;
   background: var(--color-background-muted);
-  box-shadow: var(--shadow-inner);
+  box-shadow:
+    var(--shadow-inner),
+    inset 0 0 0 1px var(--color-border);
   cursor: pointer;
   flex-shrink: 0;
   transition: background-color 0.2s ease;
@@ -63,8 +65,8 @@
 .thumb {
   position: absolute;
   z-index: 2;
-  top: 2px;
-  left: 3px;
+  top: 3px;
+  left: 4px;
   width: 22px;
   height: 22px;
   border-radius: 50%;
@@ -76,5 +78,48 @@
 }
 
 .on .thumb {
-  left: 24px;
+  left: 30px;
+}
+
+// Same slots as the ring (off, right) and the line (on, left).
+.icons::before {
+  content: none;
+}
+
+.sun,
+.moon {
+  position: absolute;
+  z-index: 1;
+  top: 6px;
+  display: none;
+  color: var(--color-secondary);
+  pointer-events: none;
+}
+
+.sun {
+  left: 6px;
+}
+
+.moon {
+  left: 34px;
+}
+
+.icons .moon {
+  display: block;
+}
+
+.icons.on .moon {
+  display: none;
+}
+
+.icons.on .sun {
+  display: block;
+}
+
+:global(html[data-theme="dark"]) .icons:global([data-theme-toggle]) .moon {
+  display: none;
+}
+
+:global(html[data-theme="dark"]) .icons:global([data-theme-toggle]) .sun {
+  display: block;
 }

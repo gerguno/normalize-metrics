@@ -14,7 +14,13 @@ body {
 }
 
 html {
+  color-scheme: light;
   background: var(--color-background-muted);
+}
+
+html[data-theme="dark"] {
+  color-scheme: dark;
+  background: var(--color-gray-1);
 }
 
 body {

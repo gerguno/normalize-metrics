@@ -1,7 +1,12 @@
 @import "@/styles/mixins.scss";
 
 .root {
+  // Inline so the chip breaks across lines and the box is cloned on each one.
+  // The line has to be at least as tall as the chip, or Safari covers the
+  // bottom border of a wrapped line with the next line.
   display: inline;
+  line-height: 24px;
+  @include trim-disable;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
   padding: var(--space-3xs) 6px calc(var(--space-3xs) + 1px) 6px;

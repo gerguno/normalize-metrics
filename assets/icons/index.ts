@@ -9,8 +9,10 @@ import { CubeIcon } from "./Cube";
 import { DownloadIcon } from "./Download";
 import { GithubIcon } from "./Github";
 import { NpmIcon } from "./Npm";
+import { MoonIcon } from "./Moon";
 import { PauseIcon } from "./Pause";
 import { PlayIcon } from "./Play";
+import { SunIcon } from "./Sun";
 import { UploadIcon } from "./Upload";
 
 export const iconRegistry = {
@@ -22,8 +24,10 @@ export const iconRegistry = {
   download: DownloadIcon,
   github: GithubIcon,
   npm: NpmIcon,
+  moon: MoonIcon,
   pause: PauseIcon,
   play: PlayIcon,
+  sun: SunIcon,
   upload: UploadIcon,
 } as const satisfies Record<string, ComponentType<IconRenderProps>>;
 

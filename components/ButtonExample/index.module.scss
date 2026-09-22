@@ -16,16 +16,16 @@
 }
 
 .pill {
-  --pad-block: 24px;
+  --pad-block: 12px;
   width: fit-content;
   box-sizing: border-box;
   // Tallest of the two em boxes, so before and after share one button.
   height: calc(var(--line-box) + var(--pad-block) * 2);
-  padding: var(--pad-block) 48px;
+  padding: var(--pad-block) 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--space-xl);
+  border-radius: var(--space-l);
   overflow: hidden;
   background: var(--color-background-muted);
   position: relative;
@@ -53,6 +53,13 @@
     &:hover::before {
       opacity: 1;
     }
+  }
+
+  @include xl {
+    --pad-block: 16px;
+    height: calc(var(--line-box) + var(--pad-block) * 2);
+    padding: var(--pad-block) 36px;
+    border-radius: var(--space-xl);
   }
 }
 
@@ -93,11 +100,15 @@
   position: relative;
   z-index: 1;
   margin: 0;
-  font-size: 66px;
+  font-size: 58px;
   text-align: center;
   white-space: nowrap;
   line-height: normal;
   @include trim-disable;
+
+  @include l {
+    font-size: 64px;
+  }
 }
 
 .guideLayer {

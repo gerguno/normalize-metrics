@@ -35,18 +35,31 @@ function tokenize(value: string): Glyph[] {
 
 export type RollingNumberProps = {
   value: string;
+  /** Digits to roll from. Used when this number mounts already in a fade. */
+  from?: string;
   /** Changes the spin even when the digits stay the same. */
   spinKey?: string;
+  /** Roll on the first paint, in step with a parent fade-in. */
+  spinOnMount?: boolean;
   className?: string;
 };
 
+function digitsIn(value: string) {
+  return tokenize(value).flatMap((glyph) =>
+    glyph.type === "digit" ? [glyph.digit] : [],
+  );
+}
+
 export default function RollingNumber({
   value,
+  from,
   spinKey = value,
+  spinOnMount = false,
   className,
 }: RollingNumberProps) {
   const reduceMotion = useReducedMotion();
   const glyphs = tokenize(value);
+  const fromDigits = from ? digitsIn(from) : [];
   let digitOrder = 0;
 
   return (
@@ -58,9 +71,11 @@ export default function RollingNumber({
             <DigitReel
               key={`d-${index}`}
               digit={glyph.digit}
+              fromDigit={fromDigits[digitOrder]}
               order={digitOrder++}
               spinKey={spinKey}
               reduceMotion={!!reduceMotion}
+              spinOnMount={spinOnMount}
             />
           ) : (
             <span key={`s-${index}-${glyph.char}`} className={styles.symbol}>
@@ -75,20 +90,25 @@ export default function RollingNumber({
 
 function DigitReel({
   digit,
+  fromDigit,
   order,
   spinKey,
   reduceMotion,
+  spinOnMount,
 }: {
   digit: number;
+  fromDigit?: number;
   order: number;
   spinKey: string;
   reduceMotion: boolean;
+  spinOnMount: boolean;
 }) {
   const filterId = useId().replace(/:/g, "");
   const blurRef = useRef<SVGFEGaussianBlurElement>(null);
   const primed = useRef(false);
   const spinning = useRef(false);
-  const y = useMotionValue(REEL_BASE + digit);
+  const origin = spinOnMount && fromDigit != null ? fromDigit : digit;
+  const y = useMotionValue(REEL_BASE + origin);
   const offset = useTransform(y, (index) => `${-index * 1.2}em`);
   const velocity = useVelocity(y);
 
@@ -106,13 +126,15 @@ function DigitReel({
   });
 
   useLayoutEffect(() => {
-    if (reduceMotion || !primed.current) {
+    if (reduceMotion || (!primed.current && !spinOnMount)) {
       primed.current = true;
       spinning.current = false;
       y.jump(REEL_BASE + digit);
       setBlur(0);
       return;
     }
+
+    primed.current = true;
 
     const from = ((Math.round(y.get()) % 10) + 10) % 10;
     const distance = ((digit - from + 10) % 10) + EXTRA_TURNS * 10;
@@ -134,7 +156,7 @@ function DigitReel({
       setBlur(0);
       controls.stop();
     };
-  }, [digit, order, reduceMotion, spinKey, y]);
+  }, [digit, order, reduceMotion, spinKey, spinOnMount, y]);
 
   return (
     <span className={styles.slot}>

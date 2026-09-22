@@ -29,8 +29,13 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" data-overlayscrollbars-initialize="">
+    <html lang="en" data-overlayscrollbars-initialize="" suppressHydrationWarning>
       <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var stored=localStorage.getItem("theme");var dark=stored==="dark"||(stored!=="light"&&matchMedia("(prefers-color-scheme: dark)").matches);if(dark)document.documentElement.dataset.theme="dark"}catch(e){}})()`,
+          }}
+        />
         {TRIED_FONTS.flatMap((font) => [
           <link
             key={font.originalUrl}

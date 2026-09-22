@@ -1,10 +1,9 @@
-@import "@/styles/mixins";
-
 .root {
   width: 100%;
   overflow: hidden;
   background: var(--color-background);
   color: var(--color-foreground);
+  box-shadow: var(--shadow-outer);
   border: var(--stroke) solid var(--color-border-solid);
   border-radius: var(--radius-m);
 }
@@ -37,6 +36,9 @@
 .lines {
   display: flex;
   flex-direction: column;
+  // Trim removes the leading. Put it back between lines so the outer
+  // padding meets the cap and the baseline, the same way Shell does.
+  gap: calc(1lh - 1cap);
   padding-inline-end: calc(var(--space-xl) + var(--space-xs));
 }
 
@@ -52,7 +54,6 @@
   color: var(--syntax-comment);
   text-align: end;
   user-select: none;
-  @include trim-disable;
 }
 
 .source {
@@ -61,13 +62,12 @@
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   user-select: text;
-  @include trim-disable;
 }
 
 .copy {
   position: absolute;
-  // Center the 32px button on the first untrimmed monoMd line (15px × 1.4).
-  top: calc(var(--space-l) + (15px * 1.4 - var(--space-ui-element-height-sm)) / 2);
+  // Same offset as Shell: centers the 32px button on the trimmed monoSm line.
+  top: 13px;
   right: 13px;
 
   &:disabled {

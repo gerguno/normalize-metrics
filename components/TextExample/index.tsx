@@ -23,7 +23,7 @@ export default function TextExample({
       loading={loading}
       disabled={disabled}
       name={name}
-      title="Text sample"
+      title="A paragraph"
     >
       <TextBody />
     </Example>

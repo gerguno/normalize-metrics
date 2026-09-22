@@ -1,0 +1,19 @@
+.wrap {
+  display: grid;
+  width: 100%;
+}
+
+.clip {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.settled {
+  overflow: visible;
+}

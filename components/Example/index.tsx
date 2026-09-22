@@ -11,7 +11,7 @@ import {
 } from "react";
 import Button from "@/components/Button";
 import Fade from "@/components/Fade";
-import Toggle from "@/components/Toggle";
+import Tab from "@/components/Tab";
 import { usePrefersReducedMotion } from "@/utils/usePrefersReducedMotion";
 import type { Metrics, NormalizeResult } from "@/lib/types";
 import { cn } from "@/utils/cn";
@@ -19,6 +19,7 @@ import textStyles from "@/styles/typography.module.scss";
 import styles from "./index.module.scss";
 
 const AUTOPLAY_MS = 2800;
+const DEFAULT_STATES = ["Before", "After"];
 
 export type ExampleDataProps = {
   result: NormalizeResult | null;
@@ -31,6 +32,13 @@ export type ExampleProps = ExampleDataProps & {
   compact?: boolean;
   eyebrow?: string;
   title?: ReactNode;
+  /** Crossfade the title when the active state changes the font. */
+  fadeTitle?: boolean;
+  /**
+   * Mutually exclusive labels for the tab group. "After" (any case) shows the
+   * normalized metrics; every other keyword shows the original.
+   */
+  states?: readonly string[];
   className?: string;
   children?: ReactNode;
 };
@@ -38,8 +46,12 @@ export type ExampleProps = ExampleDataProps & {
 export type ExampleContextValue = {
   result: NormalizeResult | null;
   metrics?: Metrics;
+  /** Active keyword from `states`. */
+  state: string;
+  setState: (value: string) => void;
+  states: readonly string[];
+  /** True when `state` is the normalized "after" metrics. */
   afterView: boolean;
-  setAfterView: (value: boolean) => void;
   loading: boolean;
   fontFamily?: string;
 };
@@ -54,18 +66,26 @@ export function useExample() {
   return context;
 }
 
+function isAfterState(state: string) {
+  return state.trim().toLowerCase() === "after";
+}
+
 function viewValue(
   result: NormalizeResult | null,
-  afterView: boolean,
+  state: string,
+  states: readonly string[],
   loading: boolean,
-  setAfterView: (value: boolean) => void,
+  setState: (value: string) => void,
 ): ExampleContextValue {
+  const afterView = isAfterState(state);
   const metrics = afterView ? result?.after : result?.before;
   return {
     result,
     metrics,
+    state,
+    setState,
+    states,
     afterView,
-    setAfterView,
     loading,
     fontFamily: result
       ? afterView
@@ -83,14 +103,30 @@ export default function Example({
   name,
   eyebrow = name ?? result?.family,
   title,
+  fadeTitle = false,
+  states = DEFAULT_STATES,
   className,
   children,
 }: ExampleProps) {
   const reduceMotion = usePrefersReducedMotion();
   const rootRef = useRef<HTMLElement>(null);
-  const [afterView, setAfterView] = useState(false);
+  const statesRef = useRef(states);
+  statesRef.current = states;
+  const [state, setState] = useState(states[0] ?? "");
   const [playing, setPlaying] = useState(true);
   const [inView, setInView] = useState(false);
+  const selectState = useMemo(() => {
+    return (value: string) => {
+      setPlaying(false);
+      setState(value);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (states.includes(state)) return;
+    setState(states[0] ?? "");
+  }, [states, state]);
+
   useEffect(() => {
     if (reduceMotion) setPlaying(false);
   }, [reduceMotion]);
@@ -104,7 +140,9 @@ export default function Example({
       ([entry]) => {
         const visible = entry.isIntersecting;
         setInView(visible);
-        if (visible) setAfterView(true);
+        if (!visible) return;
+        const list = statesRef.current;
+        if (list.length > 1) setState(list[1]);
       },
       { rootMargin: "0px 0px -50% 0px", threshold: 0 },
     );
@@ -115,16 +153,23 @@ export default function Example({
   useEffect(() => {
     if (!playing || !inView || loading || disabled || !result) return;
     const id = window.setInterval(() => {
-      setAfterView((value) => !value);
+      setState((current) => {
+        const list = statesRef.current;
+        if (list.length < 2) return current;
+        const index = Math.max(0, list.indexOf(current));
+        return list[(index + 1) % list.length] ?? current;
+      });
     }, AUTOPLAY_MS);
     return () => window.clearInterval(id);
   }, [playing, inView, loading, disabled, result]);
 
   const live = useMemo(
-    () => viewValue(result, afterView, loading, setAfterView),
-    [result, afterView, loading],
+    () => viewValue(result, state, states, loading, selectState),
+    [result, state, states, loading, selectState],
   );
   const ready = Boolean(result && live.metrics && !loading);
+  const fontKey = result?.family ?? "";
+  const viewKey = `${state}:${fontKey}`;
 
   return (
     <ExampleContext.Provider value={live}>
@@ -137,9 +182,18 @@ export default function Example({
         )}
       >
         {eyebrow ? (
-          <p className={cn(styles.eyebrow, textStyles.bodySm)}>{eyebrow}</p>
+          <Fade
+            presenceKey={eyebrow}
+            className={cn(styles.eyebrow, textStyles.bodySm)}
+          >
+            {eyebrow}
+          </Fade>
         ) : null}
-        {title ? <ExampleTitle>{title}</ExampleTitle> : null}
+        {title ? (
+          <ExampleTitle fadeWithView={fadeTitle} fontKey={fontKey}>
+            {title}
+          </ExampleTitle>
+        ) : null}
 
         <Button
           className={styles.play}
@@ -156,32 +210,37 @@ export default function Example({
                 Uploading and analyzing
               </p>
             ) : (
-              <Fade
-                presenceKey={afterView ? "after" : "before"}
-                className={styles.fade}
-              >
-                <ExampleContext.Provider
-                  value={viewValue(result, afterView, loading, setAfterView)}
-                >
-                  {children}
-                </ExampleContext.Provider>
+              <Fade presenceKey={viewKey} className={styles.fade}>
+                <ExampleContext.Provider value={live}>{children}</ExampleContext.Provider>
               </Fade>
             )}
           </div>
         ) : null}
 
-        <Controls onPause={() => setPlaying(false)} />
+        <Controls />
       </article>
     </ExampleContext.Provider>
   );
 }
 
-function ExampleTitle({ children }: { children: ReactNode }) {
+function ExampleTitle({
+  children,
+  fadeWithView,
+  fontKey,
+}: {
+  children: ReactNode;
+  fadeWithView: boolean;
+  fontKey: string;
+}) {
   const live = useExample();
-  const titleKey =
+  const label =
     typeof children === "string" || typeof children === "number"
       ? String(children)
-      : `${live.afterView ? "after" : "before"}:${live.loading ? "loading" : (live.result?.family ?? "")}`;
+      : null;
+  const titleKey =
+    label && !fadeWithView
+      ? label
+      : `${live.state}:${fontKey}:${label ?? ""}`;
 
   return (
     <Fade presenceKey={titleKey} className={cn(styles.title, textStyles.bodySm)}>
@@ -190,31 +249,53 @@ function ExampleTitle({ children }: { children: ReactNode }) {
   );
 }
 
-function Controls({ onPause }: { onPause: () => void }) {
-  const { afterView, setAfterView } = useExample();
-  const label = afterView ? "After" : "Before";
+function Controls() {
+  const { state, setState, states } = useExample();
+  if (states.length === 0) return null;
+
+  const activeIndex = Math.max(0, states.indexOf(state));
 
   return (
     <div className={styles.controls}>
-      <div className={cn(styles.caption, textStyles.bodySm)}>
-        <span className={styles.captionSizer} aria-hidden="true">
-          Before
-        </span>
-        <Fade
-          presenceKey={afterView ? "after" : "before"}
-          className={styles.captionText}
-        >
-          {label}
-        </Fade>
-      </div>
-      <Toggle
-        checked={afterView}
-        aria-label={afterView ? "Show before" : "Show after"}
-        onCheckedChange={(checked) => {
-          onPause();
-          setAfterView(checked);
+      <div
+        className={styles.tabs}
+        role="group"
+        aria-label="View"
+        onKeyDown={(event) => {
+          if (states.length < 2) return;
+          const { key } = event;
+          const nextIndex =
+            key === "ArrowRight" || key === "ArrowDown"
+              ? (activeIndex + 1) % states.length
+              : key === "ArrowLeft" || key === "ArrowUp"
+                ? (activeIndex - 1 + states.length) % states.length
+                : key === "Home"
+                  ? 0
+                  : key === "End"
+                    ? states.length - 1
+                    : null;
+          if (nextIndex == null) return;
+          event.preventDefault();
+          setState(states[nextIndex]);
+          event.currentTarget
+            .querySelector<HTMLButtonElement>(
+              `[data-state-index="${nextIndex}"]`,
+            )
+            ?.focus();
         }}
-      />
+      >
+        {states.map((label, index) => (
+          <Tab
+            key={label}
+            data-state-index={index}
+            active={index === activeIndex}
+            tabIndex={index === activeIndex ? 0 : -1}
+            onClick={() => setState(label)}
+          >
+            {label}
+          </Tab>
+        ))}
+      </div>
     </div>
   );
 }

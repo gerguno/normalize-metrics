@@ -25,7 +25,7 @@ export default function MetricsExample({
       loading={loading}
       disabled={disabled}
       name={name}
-      title="Metrics comparison"
+      title="Metrics"
     >
       <MetricsBody />
     </Example>

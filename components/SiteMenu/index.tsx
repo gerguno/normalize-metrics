@@ -1,9 +1,7 @@
 "use client";
 
-import { AnimatePresence, motion } from "motion/react";
 import TextLink from "@/components/TextLink";
-import { MENU_DURATION, MENU_EASE } from "@/utils/menuMotion";
-import { usePrefersReducedMotion } from "@/utils/usePrefersReducedMotion";
+import Reveal from "@/components/Reveal";
 import { cn } from "@/utils/cn";
 import textStyles from "@/styles/typography.module.scss";
 import styles from "./index.module.scss";
@@ -23,64 +21,29 @@ export type SiteMenuProps = {
 };
 
 export default function SiteMenu({ open, onExitComplete }: SiteMenuProps) {
-  const reduceMotion = usePrefersReducedMotion();
-  const duration = reduceMotion ? 0 : MENU_DURATION;
-  const stagger = reduceMotion ? 0 : MENU_DURATION;
-  const ease = MENU_EASE;
-
   return (
-    <AnimatePresence onExitComplete={onExitComplete}>
-      {open ? (
-        <motion.div
-          key="menu"
-          className={styles.wrap}
-          initial={{ gridTemplateRows: "0fr" }}
-          animate={{
-            gridTemplateRows: "1fr",
-            transition: { duration, ease, delay: 0 },
-          }}
-          exit={{
-            gridTemplateRows: "0fr",
-            transition: { duration, ease, delay: stagger },
-          }}
-        >
-          <div className={styles.clip}>
-            <motion.nav
-              className={cn(styles.menu, textStyles.bodyMd)}
-              aria-label="Site"
-              initial={{ opacity: 0 }}
-              animate={{
-                opacity: 1,
-                transition: { duration, ease, delay: stagger },
-              }}
-              exit={{
-                opacity: 0,
-                transition: { duration, ease, delay: 0 },
-              }}
+    <Reveal show={open} onExitComplete={onExitComplete}>
+      <nav className={cn(styles.menu, textStyles.bodyMd)} aria-label="Site">
+        <p className={cn(styles.prompt, textStyles.bodyMd)}>
+          <span className={styles.promptMuted}>
+            <span>⋊&gt;</span>
+            <span className={styles.path}>~/O/</span>
+          </span>
+          <span>ls</span>
+        </p>
+        <div className={styles.nav}>
+          {NAV.map((item) => (
+            <TextLink
+              key={item.id}
+              href={`https://olesgergun.com/#${item.id}`}
+              target="_blank"
+              className={cn(styles.link, textStyles.bodyMd)}
             >
-              <p className={cn(styles.prompt, textStyles.bodyMd)}>
-                <span className={styles.promptMuted}>
-                  <span>⋊&gt;</span>
-                  <span className={styles.path}>~/O/</span>
-                </span>
-                <span>ls</span>
-              </p>
-              <div className={styles.nav}>
-                {NAV.map((item) => (
-                  <TextLink
-                    key={item.id}
-                    href={`https://olesgergun.com/#${item.id}`}
-                    target="_blank"
-                    className={cn(styles.link, textStyles.bodyMd)}
-                  >
-                    {item.label}/
-                  </TextLink>
-                ))}
-              </div>
-            </motion.nav>
-          </div>
-        </motion.div>
-      ) : null}
-    </AnimatePresence>
+              {item.label}/
+            </TextLink>
+          ))}
+        </div>
+      </nav>
+    </Reveal>
   );
 }

@@ -27,7 +27,7 @@ export default function ButtonExample({
       loading={loading}
       disabled={disabled}
       name={name}
-      title="Within a button"
+      title="In a button"
     >
       <ButtonBody />
     </Example>

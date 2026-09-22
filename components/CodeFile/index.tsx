@@ -41,7 +41,7 @@ export default function CodeFile({ name, code, language, className }: CodeFilePr
         <p className={cn(styles.name, textStyles.monoSm)}>{name}</p>
       </div>
       <div className={styles.body}>
-        <div className={styles.lines}>
+        <div className={cn(styles.lines, textStyles.monoSm)}>
           {lines.map((tokens, index) => (
             <div className={styles.line} key={index}>
               <span className={cn(styles.gutter, textStyles.monoSm)}>{index + 1}</span>

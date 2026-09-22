@@ -209,3 +209,57 @@
   --font-mono: "Univers Next Typewriter Pro", ui-monoSmpace, monoSmpace;
   --font-mono-features: "liga" 0;
 }
+
+// Radix dark steps for the atomic colors above. Semantic tokens keep
+// pointing at those steps, so they follow. Background is white in light
+// and does not, so the dark surface is the next step up from the page.
+:root[data-theme="dark"] {
+  --color-gray-1: #111111;
+  --color-gray-2: #191919;
+  --color-gray-3: #222222;
+  --color-gray-4: #2a2a2a;
+  --color-gray-5: #313131;
+  --color-gray-6: #3a3a3a;
+  --color-gray-7: #484848;
+  --color-gray-8: #606060;
+  --color-gray-9: #6e6e6e;
+  --color-gray-10: #7b7b7b;
+  --color-gray-11: #b4b4b4;
+  --color-gray-12: #eeeeee;
+
+  --color-blue-4: #003362;
+
+  --color-pink-2: #21121d;
+  --color-pink-4: #4b143d;
+  --color-pink-6: #692955;
+  --color-pink-9: #d6409f;
+  --color-pink-11: #ff8dcc;
+
+  --color-purple-2: #1e1523;
+  --color-purple-4: #3d224e;
+  --color-purple-6: #54346b;
+  --color-purple-9: #8e4ec6;
+  --color-purple-11: #d19dff;
+
+  --color-indigo-2: #141726;
+  --color-indigo-4: #1d2e62;
+  --color-indigo-6: #304384;
+  --color-indigo-9: #3e63dd;
+  --color-indigo-11: #9eb1ff;
+
+  --color-green-2: #121b17;
+  --color-green-4: #113b29;
+  --color-green-6: #20573e;
+  --color-green-9: #30a46c;
+  --color-green-11: #3dd68c;
+
+  --color-red-2: #201314;
+  --color-red-4: #500f1c;
+  --color-red-6: #72232d;
+  --color-red-9: #e5484d;
+  --color-red-11: #ff9592;
+
+  --color-brown-11: #dbb594;
+
+  --color-background: var(--color-gray-2);
+}
