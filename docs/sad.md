@@ -273,9 +273,9 @@ No `spec.md` §6 NFR yet. Scenarios are qualitative from ADRs 0001–0003 and Fi
 | No spec.md — quality numbers are qualitative | Open question | Write `spec.md` before treating §10 as numeric NFRs | Oles |
 
 **Accepted debt (acceptable in v1, plan to fix later):**
-- CLI ships in this repo (`cli/`, `bin/`); npm publish is still future.
+- CLI ships in this repo (`cli/`, `bin/`) and on npm as `normalize-metrics`.
 - Subscribe does not persist.
-- Rhizome website and npm publish do not exist yet.
+- A broader Rhizome site does not exist yet.
 - No curl / standalone binary for people without Node.
 
 ## 12. Glossary

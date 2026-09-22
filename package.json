@@ -1,7 +1,7 @@
 {
   "name": "normalize-metrics",
-  "version": "0.1.1",
-  "description": "Rewrite font vertical metrics so a word sits in the box",
+  "version": "0.2.0",
+  "description": "Fix font vertical metrics so a word sits in the box, as CSS overrides or a rewritten file",
   "license": "MIT",
   "author": {
     "name": "Oles Gergun",
@@ -9,12 +9,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gerguno/normalize-metrics-cli.git"
+    "url": "git+https://github.com/gerguno/normalize-metrics.git"
   },
   "bugs": {
-    "url": "https://github.com/gerguno/normalize-metrics-cli/issues"
+    "url": "https://github.com/gerguno/normalize-metrics/issues"
   },
-  "homepage": "https://github.com/gerguno/normalize-metrics-cli#readme",
+  "homepage": "https://normalize-metrics.olesgergun.com",
   "keywords": [
     "font",
     "fonts",
@@ -23,6 +23,8 @@
     "otf",
     "ttf",
     "woff",
+    "woff2",
+    "css",
     "typography",
     "cli"
   ],
