@@ -64,9 +64,13 @@ function MetricsBody() {
     if (guides.length < 2) return;
     const items = guides.map((guide) => {
       const label = guide.querySelector(`.${styles.guideLabel}`);
+      const value = guide.querySelector(`.${styles.guideValue}`);
       return {
         y: guide.getBoundingClientRect().top,
-        h: label?.getBoundingClientRect().height ?? 12,
+        h: Math.max(
+          label?.getBoundingClientRect().height ?? 0,
+          value?.getBoundingClientRect().height ?? 0,
+        ),
       };
     });
     const next = guideAligns(

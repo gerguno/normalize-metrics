@@ -46,7 +46,7 @@ export default function SiteMenu({ open, onExitComplete }: SiteMenuProps) {
         >
           <div className={styles.clip}>
             <motion.nav
-              className={styles.menu}
+              className={cn(styles.menu, textStyles.bodyMd)}
               aria-label="Site"
               initial={{ opacity: 0 }}
               animate={{
@@ -58,7 +58,7 @@ export default function SiteMenu({ open, onExitComplete }: SiteMenuProps) {
                 transition: { duration, ease, delay: 0 },
               }}
             >
-              <p className={cn(styles.prompt, textStyles.bodySm)}>
+              <p className={cn(styles.prompt, textStyles.bodyMd)}>
                 <span className={styles.promptMuted}>
                   <span>⋊&gt;</span>
                   <span className={styles.path}>~/O/</span>
@@ -71,8 +71,7 @@ export default function SiteMenu({ open, onExitComplete }: SiteMenuProps) {
                     key={item.id}
                     href={`https://olesgergun.com/#${item.id}`}
                     target="_blank"
-                    variant="underline-hover"
-                    className={cn(styles.link, textStyles.bodySm)}
+                    className={cn(styles.link, textStyles.bodyMd)}
                   >
                     {item.label}/
                   </TextLink>

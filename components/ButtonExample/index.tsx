@@ -1,19 +1,18 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import Example, {
   useExample,
   type ExampleDataProps,
 } from "@/components/Example";
 import { isCenteredGood } from "@/utils/centered";
-import { guideAligns, type GuideAlign } from "@/utils/guideAlign";
 import { cn } from "@/utils/cn";
+import type { Metrics } from "@/lib/types";
 import textStyles from "@/styles/typography.module.scss";
 import styles from "./index.module.scss";
 
 const SAMPLE = "Button";
-const FONT_PX = 51.437;
-const PAD_BLOCK = 42;
+const FONT_PX = 66;
 
 export default function ButtonExample({
   result,
@@ -37,107 +36,73 @@ export default function ButtonExample({
 
 function ButtonBody() {
   const { result, metrics, fontFamily } = useExample();
-  const wordRef = useRef<HTMLParagraphElement>(null);
-  const layerRef = useRef<HTMLDivElement>(null);
-  const [lineBox, setLineBox] = useState(0);
-  const [aligns, setAligns] = useState<GuideAlign[]>([]);
-
-  useLayoutEffect(() => {
-    const el = wordRef.current;
-    if (!el) return;
-    const sync = () => setLineBox(el.getBoundingClientRect().height);
-    sync();
-    const observer = new ResizeObserver(sync);
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [fontFamily, metrics]);
-
-  useLayoutEffect(() => {
-    const layer = layerRef.current;
-    if (!layer) return;
-    const guides = [...layer.querySelectorAll(`.${styles.guide}`)];
-    if (guides.length < 2) return;
-    const items = guides.map((guide) => {
-      const value = guide.querySelector(`.${styles.guideValue}`);
-      return {
-        y: guide.getBoundingClientRect().top,
-        h: value?.getBoundingClientRect().height ?? 12,
-      };
-    });
-    const next = guideAligns(
-      items.map((item) => item.y),
-      Math.max(...items.map((item) => item.h), 1),
-    );
-    setAligns((prev) =>
-      prev.length === next.length && prev.every((value, i) => value === next[i])
-        ? prev
-        : next,
-    );
-  }, [fontFamily, metrics, lineBox]);
 
   if (!result || !metrics || !fontFamily) return null;
 
   const good = isCenteredGood(metrics.centered);
-  const emPx = ((metrics.ascent - metrics.descent) / metrics.upm) * FONT_PX;
-  const halfLeading = lineBox > 0 ? Math.max((lineBox - emPx) / 2, 0) : 0;
-  const toInkTop = PAD_BLOCK + halfLeading + (metrics.above / 1000) * FONT_PX;
-  const toInkBottom = PAD_BLOCK + halfLeading + (metrics.below / 1000) * FONT_PX;
   const tone = good ? "good" : "bad";
+  const pillStyle = {
+    "--line-box": `${Math.round(sharedLineEm(result.before, result.after) * FONT_PX)}px`,
+  } as CSSProperties;
+  // Surplus on one side of the cap-to-baseline center. Cutting it evens the two leftovers.
+  const surplus = metrics.below - metrics.above;
+  const extra = Math.abs(surplus);
+  const extraPx = (extra / 1000) * FONT_PX;
+  // A subpixel cut still paints a 1px rule. Skip it; the word is already centered.
+  const visible = extraPx >= 1;
+  // More room below the baseline means the word sits high, so the cut is at the bottom.
+  const cutTop = surplus < 0;
 
   return (
     <div className={styles.wrap}>
-      <div className={styles.pill}>
-        <div
-          className={cn(styles.band, styles.bandTop, styles[tone])}
-          style={{ height: toInkTop }}
-        />
-        <p ref={wordRef} className={styles.word} style={{ fontFamily }}>
+      <div className={styles.pill} style={pillStyle}>
+        {visible ? (
+          <div
+            className={cn(
+              styles.band,
+              cutTop ? styles.bandTop : styles.bandBottom,
+              styles[tone],
+            )}
+            style={{ height: extraPx }}
+          />
+        ) : null}
+        <p className={styles.word} style={{ fontFamily }}>
           {SAMPLE}
         </p>
-        <div
-          className={cn(styles.band, styles.bandBottom, styles[tone])}
-          style={{ height: toInkBottom }}
-        />
       </div>
-      <div ref={layerRef} className={styles.guideLayer}>
-        <Guide
-          y={`${toInkTop}px`}
-          value={Math.round(metrics.above)}
-          tone={tone}
-          align={aligns[0]}
-        />
-        <Guide
-          y={`calc(100% - ${toInkBottom}px)`}
-          value={Math.round(metrics.below)}
-          tone={tone}
-          align={aligns[1]}
-        />
-      </div>
+      {visible ? (
+        <div className={styles.guideLayer}>
+          <Guide
+            y={cutTop ? `${extraPx}px` : `calc(100% - ${extraPx}px)`}
+            value={Math.round(extra)}
+            tone={tone}
+          />
+        </div>
+      ) : null}
     </div>
   );
+}
+
+function sharedLineEm(before: Metrics, after: Metrics) {
+  const em = (metrics: Metrics) =>
+    (metrics.ascent - metrics.descent) / (metrics.upm || 1);
+  return Math.max(em(before), em(after));
 }
 
 function Guide({
   y,
   value,
   tone,
-  align = "center",
 }: {
   y: string;
   value: number;
   tone: "good" | "bad";
-  align?: GuideAlign;
 }) {
   return (
-    <div
-      className={cn(
-        styles.guide,
-        styles[tone],
-        align === "above" && styles.above,
-        align === "below" && styles.below,
-      )}
-      style={{ top: y }}
-    >
+    <div className={cn(styles.guide, styles[tone])} style={{ top: y }}>
+      <span className={cn(textStyles.monoXs, styles.guideLabel)}>
+        extra space
+      </span>
       <span className={cn(textStyles.monoXs, styles.guideValue)}>{value}</span>
     </div>
   );

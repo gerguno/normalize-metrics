@@ -1,29 +1,47 @@
-@import "@/styles/mixins";
+.bodyMd {
+  font-family: var(--font-ui);
+  font-feature-settings: var(--font-ui-features);
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0;
+}
+
+.monoMd {
+  font-family: var(--font-mono);
+  font-feature-settings: var(--font-mono-features);
+  font-variant-ligatures: none;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0;
+}
 
 .bodySm {
   font-family: var(--font-ui);
   font-feature-settings: var(--font-ui-features);
   font-size: 14px;
   font-weight: 400;
-  line-height: 1.35;
+  line-height: 1.4;
   letter-spacing: 0;
-  @include trim;
 }
 
 .monoSm {
   font-family: var(--font-mono);
+  font-feature-settings: var(--font-mono-features);
+  font-variant-ligatures: none;
   font-size: 13px;
   font-weight: 400;
-  line-height: 1.35;
+  line-height: 1.4;
   letter-spacing: 0;
-  @include trim;
 }
 
 .monoXs {
   font-family: var(--font-mono);
+  font-feature-settings: var(--font-mono-features);
+  font-variant-ligatures: none;
   font-size: 11px;
   font-weight: 400;
-  line-height: 1.35;
+  line-height: 1.4;
   letter-spacing: 0;
-  @include trim;
 }

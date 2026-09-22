@@ -2,7 +2,7 @@
 status: Draft
 owner: Oles
 reviewers: ["Oles"]
-updated_at: "2026-09-21"
+updated_at: "2026-09-22"
 feature_size: S
 target_surfaces: [web-frontend, cli]
 ---
@@ -13,7 +13,7 @@ There is no `spec.md` yet. This SAD is standalone. It records two product facts 
 
 ## 1. Introduction and goals
 
-**Intent.** Normalize font metrics is a Rhizome **project**: a page on the future Oles Gergun website, and also the first place the Rhizome UI kit is built. It rewrites a font’s vertical metrics so a one-word label sits in the middle of an equal-`padding-block` button. Outlines, rhythm, and the look of the face stay unchanged. People reach that rewrite through a GUI or a CLI.
+**Intent.** Normalize font metrics is a Rhizome **project**: a page on the future Oles Gergun website, and also the first place the Rhizome UI kit is built. It rewrites a font’s vertical metrics so a one-word label sits in the middle of an equal-`padding-block` button. Outlines, rhythm, and the look of the face stay unchanged. People reach that rewrite through a GUI or a CLI. The CLI can also write the same box as CSS metric overrides and leave the file alone.
 
 **Top-3 quality goals (1-liners; full scenarios in §10):**
 
@@ -46,6 +46,7 @@ There is no `spec.md` yet. This SAD is standalone. It records two product facts 
 **Conventions.**
 - Public copy structure: one intro (problem + CSS default + what the rewrite does), then surface-specific how-to. Canonical wording in ADR 0002; screens in Figma.
 - Never overwrite a font by default. CLI writes a sibling copy; `--in-place` is opt-in.
+- `--css` writes `@font-face` overrides for the original files into `style.css`, or into the path that follows the flag. It does not write a font. Those descriptors must not be applied to an already rewritten file.
 - One extra-rule (ADR 0001 option 2). Not a v1 config flag.
 
 **Regulatory / external.**
@@ -54,7 +55,7 @@ There is no `spec.md` yet. This SAD is standalone. It records two product facts 
 
 ## 3. Context and scope
 
-Normalize font metrics is one Rhizome project. A web developer uses the GUI to prove a single face, or the CLI to fix a folder and fail CI. CSS `text-box: trim-both cap alphabetic` is the no-file alternative (Baseline-complete when Firefox shipped it on 18 August 2026). The product exists for the default, still-untrimmed box.
+Normalize font metrics is one Rhizome project. A web developer uses the GUI to prove a single face, or the CLI to fix a folder and fail CI. CSS `text-box: trim-both cap alphabetic` is the no-file alternative (Baseline-complete when Firefox shipped it on 18 August 2026). The CLI `--css` file is the other no-file path: `ascent-override`, `descent-override`, and `line-gap-override` set to the ADR 0001 / 0003 box, as percentages of the em. Those descriptors center the cap inside the line box and leave the file unchanged. `text-box` trims to the cap and the baseline. The product exists for the default, still-untrimmed box, and the rewrite remains the fix for every consumer of that box.
 
 Product logic, IA, and visual design are in Figma: [Rhizome — Normalize font metrics](https://www.figma.com/design/bF9a8QlbdvcuiRNl7XlrPf/Rhizome?node-id=145-4878&m=dev) (node `145:4878`). That frame is Introduction → GUI (drop, measurements, download, three tried fonts) → CLI (npm / npx / `--check`).
 
@@ -103,9 +104,9 @@ C4Context
 
 3. **Rewrite vertical metrics only, cap-centered** — ADR 0001. Descender-symmetric extra, typo = hhea, `USE_TYPO_METRICS` on, Win bbox envelope. Outlines, UPM, and horizontal metrics stay untouched. CSS trim is acknowledged in the intro and is not the product. **Spend original used line-height before growing** — ADR 0003. `lineGap` is leftover `oldAscent + |oldDescent| + oldLineGap − content`, not a constant 0.
 
-4. **npm is the CLI front door** — `npx` / `npm i -g` / a repo devDependency. Python is an implementation detail. Config is `include` / `exclude` / `outDir` / `suffix`. `--check` and `--dry-run` write nothing.
+4. **npm is the CLI front door** — `npx` / `npm i -g` / a repo devDependency. Python is an implementation detail. Config is `include` / `exclude` / `outDir` / `suffix`. `--check` and `--dry-run` write nothing. `--css` writes `@font-face` rules for the measured files into `style.css` unless a path follows the flag, and does not write a font. Files that share a family, weight, style, and box become one rule with several `src` values. Percentages are the engine’s after box divided by UPM: `ascent`, `|descent|`, `lineGap`. `src` points at the original file.
 
-Each later decision should trace to one of these. A second extra-rule flag, a pip install, or extracting Rhizome in this repo would contradict 1–4. ADR 0003 is not a second extra-rule; it only assigns `lineGap`.
+Each later decision should trace to one of these. A second extra-rule flag, a pip install, or extracting Rhizome in this repo would contradict 1–4. `--css` does not: it prints the same target box. ADR 0003 is not a second extra-rule; it only assigns `lineGap`.
 
 ## 5. Building block view
 
@@ -142,7 +143,7 @@ C4Container
     Container_Boundary(app, "Normalize font metrics") {
         Container(web, "Web GUI", "Next.js 15, React 19", "Project page: intro, drop, example, CLI copy")
         Container(api, "Normalize API", "Next.js Node route", "Accepts one font, returns rewritten bytes")
-        Container(cli, "CLI", "npm / npx", "File or folder; --check; config; stacked loaders")
+        Container(cli, "CLI", "npm / npx", "File or folder; --check; --css; config; stacked loaders")
         Container(engine, "Normalize engine", "Python 3, fontTools", "ADR 0001 vertical-metrics rewrite")
     }
 
@@ -183,7 +184,7 @@ sequenceDiagram
     actor Dev
     participant CLI
     participant Engine
-    Dev->>CLI: file, folder, or --check
+    Dev->>CLI: file, folder, --check, or --css
     CLI->>CLI: find otf ttf woff woff2
     loop each matching font
         CLI->>Engine: rewrite or measure
@@ -193,6 +194,8 @@ sequenceDiagram
         CLI-->>Dev: sibling copies next to originals
     else check
         CLI-->>Dev: report and non-zero exit if any font is still off
+    else css
+        CLI-->>Dev: stylesheet of metric overrides; fonts unchanged
     end
 ```
 
@@ -248,7 +251,7 @@ No `spec.md` §6 NFR yet. Scenarios are qualitative from ADRs 0001–0003 and Fi
 **QG-2. Surface lockstep**
 - **When:** the same file is sent through the GUI and the CLI.
 - **Then:** the rewritten tables match; public intro copy is shared, not GUI-only.
-- **How verify:** both wrappers call `lib/engine.py`; page sections follow Figma Introduction / GUI / CLI.
+- **How verify:** both wrappers call `lib/engine.py`; `--css` percentages equal `after.ascent / upm`, `|after.descent| / upm`, and `after.lineGap / upm`; page sections follow Figma Introduction / GUI / CLI.
 
 **QG-3. Kit extractability**
 - **When:** the Rhizome website is built.
@@ -264,6 +267,7 @@ No `spec.md` §6 NFR yet. Scenarios are qualitative from ADRs 0001–0003 and Fi
 | Kit extraction later is a multi-day move | Medium | Keep `example` isolated; do not publish a Rhizome package in v1 | Oles |
 | Python must exist on the API host | Medium | Document the runtime; hide pip from users | Oles |
 | `--check` will fail existing kits the first time | Medium | Expected; document in CLI copy | Oles |
+| `--css` descriptors applied to an already rewritten file | Low | `src` points at the original; the flag does not write a font | Oles |
 | Variable fonts and TTC skipped in v1 | Low | One-line skip reason; ADR 0001 out-of-scope | Oles |
 | TextExample `--lead` is not table `lineGap` | Low | ADR 0003 spends file used height only; do not chase UA `normal` | Oles |
 | No spec.md — quality numbers are qualitative | Open question | Write `spec.md` before treating §10 as numeric NFRs | Oles |
@@ -288,4 +292,5 @@ No `spec.md` §6 NFR yet. Scenarios are qualitative from ADRs 0001–0003 and Fi
 | Cap-center offset | `((ascent − H.yMax) − \|descent\|) / 2`, per mille of em. Zero means H is vertically centered. |
 | Default case | Untrimmed `text-box`. What most type ramps and kits were written for. Why this product exists. |
 | Engine | `lib/engine.py` — the 0001 rewrite plus 0003 `lineGap`. GUI API and CLI are wrappers. |
+| Metric overrides | `@font-face` descriptors `ascent-override`, `descent-override`, `line-gap-override`. CLI `--css` writes them from the after box, as percentages of the em. They apply only where that stylesheet is used, and they point at the original file. |
 | Tried fonts | Unica77 (Lineto), America (Grilli Type), Ritma (British Standard Type) — Figma GUI examples. |

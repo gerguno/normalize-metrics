@@ -13,6 +13,8 @@ function metrics(partial: Partial<Metrics> & Pick<Metrics, "centered">): Metrics
     above: 0,
     below: 0,
     offset: 0,
+    ascentOverride: 100,
+    descentOverride: 0,
     grade: "Bad",
     ...partial,
   };

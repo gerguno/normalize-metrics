@@ -3,9 +3,10 @@ import type { Args } from "./types.ts";
 export const HELP = `normalize-metrics — rewrite vertical metrics so a word sits in the box
 
 Usage:
-  normalize-metrics <file|folder> [options]
+  normalize-metrics <file|folder> [more files] [options]
   normalize-metrics [options]
 
+Pass one file, a set of files, or a folder.
 A folder means every .otf, .ttf, .woff, and .woff2 inside it.
 Writes a normalized copy next to the original. Never overwrites unless --in-place.
 Fonts that already have good metrics are left alone.
@@ -13,6 +14,7 @@ Fonts that already have good metrics are left alone.
 Options:
   --check           report fonts that are still off; write nothing; exit 1 if any are off
   --dry-run         same report; write nothing
+  --css [file]      write metric overrides for the original files (default: style.css); do not rewrite fonts
   --in-place        overwrite the original (opt-in)
   --out-dir <dir>   write copies into this directory
   --suffix <text>   filename suffix for copies (default: -normalized)
@@ -25,21 +27,26 @@ Config (normalize-metrics.config.json or "normalize-metrics" in package.json):
 
 Examples:
   normalize-metrics Inter-Regular.otf
+  normalize-metrics Inter-Regular.woff2 GT-America-Regular.otf --css
   normalize-metrics ./fonts
+  normalize-metrics ./fonts --css
   npx normalize-metrics ./fonts --check
 `;
 
 const FLAGS_WITH_VALUE = new Set(["--out-dir", "--suffix", "--config"]);
 
+export const DEFAULT_CSS_FILE = "style.css";
+
 export function parseArgs(argv: string[]): Args {
   const args: Args = {
-    path: null,
+    paths: [],
     check: false,
     dryRun: false,
     inPlace: false,
     outDir: null,
     suffix: null,
     configPath: null,
+    cssPath: null,
     help: false,
     version: false,
   };
@@ -66,6 +73,16 @@ export function parseArgs(argv: string[]): Args {
       args.inPlace = true;
       continue;
     }
+    if (token === "--css") {
+      const value = argv[i + 1];
+      if (value && !value.startsWith("-")) {
+        args.cssPath = value;
+        i += 1;
+      } else {
+        args.cssPath = DEFAULT_CSS_FILE;
+      }
+      continue;
+    }
     if (FLAGS_WITH_VALUE.has(token)) {
       const value = argv[i + 1];
       if (!value || value.startsWith("-")) {
@@ -80,20 +97,24 @@ export function parseArgs(argv: string[]): Args {
     if (token.startsWith("-")) {
       throw new Error(`Unknown flag: ${token}`);
     }
-    if (args.path) {
-      throw new Error("Pass one file or one folder.");
-    }
-    args.path = token;
+    args.paths.push(token);
   }
 
   if (args.inPlace && args.outDir) {
     throw new Error("Use either --in-place or --out-dir, not both.");
   }
+  if (args.cssPath && !args.cssPath.toLowerCase().endsWith(".css")) {
+    throw new Error("--css needs a .css file.");
+  }
+  if (args.cssPath && (args.check || args.dryRun || args.inPlace || args.outDir)) {
+    throw new Error("--css writes a stylesheet and no font. Leave off --check, --dry-run, --in-place, and --out-dir.");
+  }
 
   return args;
 }
 
-export function modeOf(args: Args): "write" | "dry-run" | "check" {
+export function modeOf(args: Args): "write" | "dry-run" | "check" | "css" {
+  if (args.cssPath) return "css";
   if (args.check) return "check";
   if (args.dryRun) return "dry-run";
   return "write";

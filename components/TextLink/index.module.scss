@@ -1,38 +1,26 @@
 @import "@/styles/mixins";
 
 .root {
-  color: inherit;
+  color: var(--color-foreground);
   font-size: inherit;
   width: fit-content;
   cursor: pointer;
   text-decoration: underline;
+  text-decoration-thickness: var(--stroke);
+  text-decoration-color: var(--color-border-contrast);
   text-underline-offset: 2px;
   text-underline-position: from-font;
   transition: text-decoration-color 0.2s linear;
+
+  @include hover-supported {
+    &:hover {
+      text-decoration-color: var(--color-foreground);
+    }
+  }
 }
 
 .asButton {
   background: transparent;
   border: none;
   padding: 0;
-}
-
-.underline {
-  text-decoration-color: currentColor;
-
-  @include hover-supported {
-    &:hover {
-      text-decoration-color: transparent;
-    }
-  }
-}
-
-.underlineHover {
-  text-decoration-color: transparent;
-
-  @include hover-supported {
-    &:hover {
-      text-decoration-color: currentColor;
-    }
-  }
 }

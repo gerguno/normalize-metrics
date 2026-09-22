@@ -1,0 +1,27 @@
+.comment {
+  color: var(--syntax-comment);
+}
+
+.keyword {
+  color: var(--syntax-keyword);
+}
+
+.constant {
+  color: var(--syntax-constant);
+}
+
+.string {
+  color: var(--syntax-string);
+}
+
+.entity {
+  color: var(--syntax-entity);
+}
+
+.tag {
+  color: var(--syntax-tag);
+}
+
+.variable {
+  color: var(--syntax-variable);
+}

@@ -2,8 +2,10 @@
 
 $menu-duration: 0.35s;
 $menu-ease: cubic-bezier(0.2, 0, 0, 1);
-$line-shift: 6px;
-$compact-line-shift: 4px;
+$line-gap: 5px;
+$compact-line-gap: 3px;
+// Seats a 1.5px stroke on the device-pixel grid inside the menu buttons.
+$line-snap: 0.25px;
 $header-size: 96px;
 $compact-size: 50px;
 
@@ -54,6 +56,7 @@ $compact-size: 50px;
   padding: var(--space-l);
   background: var(--color-background);
   border-bottom: 1px solid var(--color-border);
+  box-shadow: var(--shadow-outer);
   transform: translateY(0);
   --menu-gap: var(--space-l);
 }
@@ -62,7 +65,7 @@ $compact-size: 50px;
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 600px;
+  max-width: var(--space-container);
 }
 
 .compactInner {
@@ -111,7 +114,7 @@ $compact-size: 50px;
 
 .menu {
   background: transparent;
-  color: var(--color-border-solid);
+  color: var(--color-border-contrast);
   transition: color 0.2s;
 
   @include hover-supported {
@@ -122,21 +125,23 @@ $compact-size: 50px;
 }
 
 .lines {
+  position: relative;
+  top: $line-snap;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 5px;
+  gap: $line-gap;
   width: 47px;
 }
 
 .compact .lines {
   width: 24px;
-  gap: 3px;
+  gap: $compact-line-gap;
 }
 
 .line {
   display: block;
-  height: 1px;
+  height: var(--stroke);
   background: currentColor;
   transition-property: transform, opacity;
   transition-duration: $menu-duration;
@@ -144,20 +149,20 @@ $compact-size: 50px;
 }
 
 .open .line:nth-child(1) {
-  transform: translateY($line-shift);
+  transform: translateY(calc(#{$line-gap} + var(--stroke)));
 }
 
 .open .line:nth-child(3) {
-  transform: translateY(-$line-shift);
+  transform: translateY(calc(-1 * (#{$line-gap} + var(--stroke))));
 }
 
 .compact.open .line:nth-child(1) {
-  transform: translateY($compact-line-shift);
+  transform: translateY(calc(#{$compact-line-gap} + var(--stroke)));
   opacity: 0;
 }
 
 .compact.open .line:nth-child(3) {
-  transform: translateY(-$compact-line-shift);
+  transform: translateY(calc(-1 * (#{$compact-line-gap} + var(--stroke))));
   opacity: 0;
 }
 

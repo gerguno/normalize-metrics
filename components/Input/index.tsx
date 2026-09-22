@@ -5,11 +5,20 @@ import { cn } from "@/utils/cn";
 import textStyles from "@/styles/typography.module.scss";
 import styles from "./index.module.scss";
 
+export type InputSize = "s" | "m";
+
 export type InputProps = InputHTMLAttributes<HTMLInputElement> & {
   label?: ReactNode;
+  size?: InputSize;
 };
 
-export default function Input({ label, className, id, ...rest }: InputProps) {
+export default function Input({
+  label,
+  className,
+  id,
+  size = "s",
+  ...rest
+}: InputProps) {
   return (
     <label className={styles.root}>
       {label ? (
@@ -18,7 +27,12 @@ export default function Input({ label, className, id, ...rest }: InputProps) {
       <input
         {...rest}
         id={id}
-        className={cn(styles.field, textStyles.bodySm, className)}
+        className={cn(
+          styles.field,
+          size === "m" ? textStyles.bodyMd : textStyles.bodySm,
+          size === "m" && styles.sizeM,
+          className,
+        )}
       />
     </label>
   );

@@ -1,0 +1,62 @@
+@import "@/styles/mixins";
+
+.root {
+  display: inline-flex;
+  position: relative;
+  align-items: baseline;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  @include trim-disable;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.track {
+  display: inline-flex;
+  align-items: baseline;
+  height: 1.2em;
+}
+
+.slot {
+  display: inline-block;
+  position: relative;
+  height: 1.2em;
+  overflow: hidden;
+}
+
+.filter {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.reel {
+  display: flex;
+  flex-direction: column;
+  will-change: transform, filter;
+}
+
+.face,
+.symbol {
+  display: block;
+  height: 1.2em;
+  line-height: 1.2em;
+  @include trim-disable;
+}
+
+.face {
+  text-align: center;
+}
+
+.symbol {
+  flex: none;
+}

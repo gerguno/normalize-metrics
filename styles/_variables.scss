@@ -56,7 +56,6 @@
 
   --color-accent: #fff942;
   --color-accent-contrast: #eacb3c;
-  --color-border-solid: #dedede;
 
   // SPACES
   --space-3xs: 2px;
@@ -69,6 +68,7 @@
   --space-2xl: 48px;
   --space-3xl: 64px;
   --space-4xl: 112px;
+  --space-container: 652px;
 
   //////////////////////////////
   // SEMANTIC
@@ -80,20 +80,31 @@
   --color-secondary: var(--color-gray-10);
   --color-sidebar: var(--color-gray-3);
   --color-focus: var(--color-foreground);
-  --color-border: color-mix(in srgb, var(--color-foreground) 15%, transparent);
+  --color-border: color-mix(in srgb, var(--color-foreground) 12%, transparent);
+  --color-border-solid: color-mix(
+    in srgb,
+    var(--color-foreground) 12%,
+    var(--color-background)
+  );
+  --color-border-contrast: var(--color-gray-7);
   --color-background-muted: color-mix(
     in srgb,
-    var(--color-foreground) 3%,
+    var(--color-foreground) 1%,
     transparent
+  );
+  --color-background-muted-solid: color-mix(
+    in srgb,
+    var(--color-foreground) 1%,
+    var(--color-background)
   );
   --color-hover-dark: color-mix(
     in srgb,
-    var(--color-foreground) 6%,
+    var(--color-foreground) 4%,
     transparent
   );
   --color-hover-light: color-mix(
     in srgb,
-    var(--color-background) 6%,
+    var(--color-background) 8%,
     transparent
   );
   --color-accent-background: color-mix(
@@ -160,8 +171,27 @@
 
   --color-secondary-brown-contrast: var(--color-brown-11);
 
+  // SYNTAX
+  // Same split as Pierre Light Vibrant: each kind of token has its own hue.
+  --syntax-comment: var(--color-secondary);
+  --syntax-keyword: var(--color-secondary-pink-contrast);
+  --syntax-constant: var(--color-secondary-indigo-contrast);
+  --syntax-string: var(--color-secondary-brown-contrast);
+  --syntax-entity: var(--color-secondary-purple-contrast);
+  --syntax-tag: var(--color-secondary-green-contrast);
+  --syntax-variable: var(--color-secondary-brown-contrast);
+
+  // SHADOWS
+  --shadow-inner: inset 0 0 2px
+    color-mix(in srgb, var(--color-foreground) 5%, transparent);
+  --shadow-outer: 1px 2px 2px
+    color-mix(in srgb, var(--color-foreground) 4%, transparent);
+
   // SPACES
-  --space-ui-element-height: var(--space-xl);
+  --space-ui-element-height-sm: var(--space-xl);
+  --space-ui-element-height-md: calc(
+    var(--space-xl) + var(--space-2xs) + var(--space-2xs)
+  );
   --space-ui-label-gap: var(--space-s);
   --space-ui-element-padding-inline-text: var(--space-s);
   --space-ui-element-padding-inline-icon: var(--space-xs);
@@ -170,8 +200,12 @@
   --radius-s: var(--space-xs);
   --radius-m: var(--space-m);
 
+  // STROKE
+  --stroke: 1px;
+
   // FONTS
   --font-ui: "KTF Techne", ui-sans-serif, system-ui, sans-serif;
   --font-ui-features: "ss03" 1, "ss05" 1;
   --font-mono: "Univers Next Typewriter Pro", ui-monoSmpace, monoSmpace;
+  --font-mono-features: "liga" 0;
 }

@@ -1,22 +1,102 @@
+@import "@/styles/mixins";
+
 .root {
-  position: relative;
   width: 100%;
-  background: var(--color-foreground);
-  color: var(--color-background);
+  overflow: hidden;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  border: var(--stroke) solid var(--color-border-solid);
   border-radius: var(--radius-m);
-  padding: var(--space-l);
+  box-shadow: var(--shadow-outer);
+}
+
+.tabs {
+  position: relative;
+  display: flex;
+  gap: var(--space-m);
+  padding-inline: calc(var(--space-m) + var(--space-2xs)) var(--space-s);
+  background: var(--color-background-muted-solid);
+  border-bottom: var(--stroke) solid var(--color-border-solid);
+}
+
+.indicator {
+  position: absolute;
+  left: 0;
+  bottom: calc(var(--stroke) * -1);
+  width: var(--indicator-w, 0px);
+  height: var(--stroke);
+  background: var(--color-foreground);
+  transform: translateX(var(--indicator-x, 0px));
+  pointer-events: none;
+}
+
+.indicatorReady {
+  @media (prefers-reduced-motion: no-preference) {
+    transition:
+      transform 0.25s cubic-bezier(0.2, 0, 0, 1),
+      width 0.25s cubic-bezier(0.2, 0, 0, 1);
+  }
+}
+
+.tab {
+  margin: 0;
+  padding: var(--space-s) 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-secondary);
+  cursor: pointer;
+
+  @media (prefers-reduced-motion: no-preference) {
+    transition: color 0.25s cubic-bezier(0.2, 0, 0, 1);
+  }
+
+  @include hover-supported {
+    &:hover:not(.tabActive) {
+      color: var(--color-foreground);
+    }
+  }
+}
+
+.tabActive {
+  color: var(--color-foreground);
+  cursor: default;
+}
+
+.body {
+  position: relative;
+  padding: var(--space-l) 13px var(--space-l) calc(var(--space-m) + var(--space-2xs));
+}
+
+.codeFade {
+  display: grid;
+}
+
+.codeLayer {
+  grid-area: 1 / 1;
 }
 
 .code {
   margin: 0;
-  color: var(--color-background);
+  padding-inline-end: calc(var(--space-xl) + var(--space-xs));
+}
+
+.command {
   white-space: pre-wrap;
+  user-select: text;
+
+  // Prompt is generated content so selection and the copy button omit it.
+  &::before {
+    content: var(--shell-prompt, "$");
+    margin-inline-end: var(--space-m);
+    color: var(--syntax-comment);
+    user-select: none;
+  }
 }
 
 .copy {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 13px;
+  right: 13px;
 
   &:disabled {
     opacity: 1;

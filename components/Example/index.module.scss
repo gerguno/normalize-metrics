@@ -2,23 +2,29 @@
 
 .root {
   position: relative;
+  z-index: 1;
   width: 100%;
-  background: var(--color-background);
+  background: var(--color-background-muted-solid);
+  box-shadow: var(--shadow-outer);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-m);
 
   &::after {
     content: "";
     position: absolute;
-    inset: 3px;
+    inset: 4px;
     border: 1px solid var(--color-border);
-    border-radius: 12px;
+    background: var(--color-background);
+    z-index: -1;
+    border-radius: 11px;
     pointer-events: none;
   }
 }
 
 .tall {
-  height: 600px;
+  // 3/4 while narrow; the container cap makes a full-width card square.
+  aspect-ratio: 3 / 4;
+  max-height: calc(var(--space-container) * 0.75); // make 4 / 3 on desktop
   padding: var(--space-l);
   display: flex;
   flex-direction: column;

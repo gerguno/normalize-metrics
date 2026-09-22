@@ -48,11 +48,12 @@ export default function Subscribe() {
 
   return (
     <form className={styles.root} onSubmit={onSubmit}>
-      <p className={textStyles.bodySm}>Subscribe for new stuff</p>
+      <p className={textStyles.bodyMd}>Subscribe for new stuff</p>
       <div className={styles.fields}>
         <Input
           type="email"
           name="email"
+          size="m"
           autoComplete="email"
           placeholder="Enter your e-mail"
           value={email}
@@ -66,6 +67,7 @@ export default function Subscribe() {
         <Button
           type="submit"
           variant="primary"
+          size="m"
           fullWidth
           icon={status === "subscribed" ? "checkmark" : undefined}
           disabled={!emailOk || disabled || status === "subscribed"}
@@ -77,7 +79,7 @@ export default function Subscribe() {
               : "Subscribe"}
         </Button>
         {error ? (
-          <p className={cn(styles.error, textStyles.bodySm)} aria-live="polite">
+          <p className={cn(styles.error, textStyles.bodyMd)} aria-live="polite">
             {error}
           </p>
         ) : null}

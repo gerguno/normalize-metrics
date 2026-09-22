@@ -6,6 +6,7 @@
   -webkit-box-decoration-break: clone;
   padding: var(--space-3xs) 6px calc(var(--space-3xs) + 1px) 6px;
   border-radius: var(--space-2xs);
-  background: var(--color-hover-dark);
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
   color: var(--color-foreground);
 }

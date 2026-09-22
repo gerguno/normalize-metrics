@@ -17,8 +17,11 @@ export type ButtonVariant =
   | "quaternary"
   | "shell";
 
+export type ButtonSize = "s" | "m";
+
 type ButtonShared = {
   variant?: ButtonVariant;
+  size?: ButtonSize;
   icon?: IconProps["name"];
   fullWidth?: boolean;
   children?: ReactNode;
@@ -39,6 +42,7 @@ export type ButtonProps = ButtonAsButton | ButtonAsLink;
 
 export default function Button({
   variant = "primary",
+  size = "s",
   icon,
   fullWidth = false,
   className,
@@ -47,8 +51,9 @@ export default function Button({
 }: ButtonProps) {
   const classes = cn(
     styles.root,
-    textStyles.bodySm,
+    size === "m" ? textStyles.bodyMd : textStyles.bodySm,
     styles[variant],
+    size === "m" && styles.sizeM,
     fullWidth && styles.fullWidth,
     className,
   );

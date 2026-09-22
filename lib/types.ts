@@ -3,6 +3,8 @@ export type Metrics = {
   below: number;
   offset: number;
   centered: number;
+  ascentOverride: number;
+  descentOverride: number;
   grade: "Great" | "Bad";
   cap: number;
   xHeight?: number;

@@ -1,3 +1,6 @@
+@import "@/styles/mixins";
+@import "@/styles/responsives";
+
 .root {
 }
 
@@ -5,56 +8,96 @@
   position: relative;
   isolation: isolate;
   width: fit-content;
+  transition: scale 0.12s ease;
+
+  &:active {
+    scale: 0.96;
+  }
 }
 
 .pill {
+  --pad-block: 24px;
   width: fit-content;
-  padding: 42px 30px;
+  box-sizing: border-box;
+  // Tallest of the two em boxes, so before and after share one button.
+  height: calc(var(--line-box) + var(--pad-block) * 2);
+  padding: var(--pad-block) 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border-radius: var(--space-xl);
   overflow: hidden;
   background: var(--color-background-muted);
   position: relative;
-  pointer-events: none;
+  // The stage ignores pointers; this face is the clickable button.
+  pointer-events: auto;
+  cursor: pointer;
+  user-select: none;
+  // Inset ring keeps the 1px edge off the box, so the cut measurement stays put.
+  box-shadow:
+    var(--shadow-outer),
+    inset 0 0 0 1px var(--color-border);
+
+  &::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--color-hover-dark);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+  }
+
+  @include hover-supported {
+    &:hover::before {
+      opacity: 1;
+    }
+  }
 }
 
 .band {
   position: absolute;
   left: 0;
   right: 0;
-  border-style: dashed;
+  pointer-events: none;
 }
 
 .bandTop {
   top: 0;
-  border-width: 0 0 1px;
+  border-bottom: 1px dashed currentColor;
 }
 
 .bandBottom {
   bottom: 0;
-  border-width: 1px 0 0;
+  border-top: 1px dashed currentColor;
 }
 
 .good {
-  background: var(--color-secondary-green-fill);
-  border-color: var(--color-secondary-green);
-  color: var(--color-secondary-green-contrast);
+  color: var(--color-secondary-green);
 }
 
 .bad {
+  color: var(--color-secondary-red);
+}
+
+.band.good {
+  background: var(--color-secondary-green-fill);
+}
+
+.band.bad {
   background: var(--color-secondary-red-fill);
-  border-color: var(--color-secondary-red);
-  color: var(--color-secondary-red-contrast);
 }
 
 .word {
   position: relative;
   z-index: 1;
   margin: 0;
-  font-size: 51.437px;
+  font-size: 66px;
   text-align: center;
   white-space: nowrap;
   line-height: normal;
-  text-box-trim: none;
+  @include trim-disable;
 }
 
 .guideLayer {
@@ -70,21 +113,24 @@
   right: 0;
   height: 0;
   pointer-events: none;
-  background: none;
 }
 
+.guideLabel,
 .guideValue {
   position: absolute;
   top: 0;
-  left: calc(100% + var(--space-xs));
   transform: translateY(-50%);
   white-space: nowrap;
 }
 
-.above .guideValue {
-  transform: translateY(-100%);
+.guideLabel {
+  right: calc(100% + var(--space-xs));
+
+  @include xs {
+    display: none;
+  }
 }
 
-.below .guideValue {
-  transform: none;
+.guideValue {
+  left: calc(100% + var(--space-xs));
 }

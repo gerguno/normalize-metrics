@@ -1,3 +1,4 @@
+@import "@/styles/mixins";
 @import "@/styles/responsives";
 
 .root {
@@ -25,9 +26,9 @@
   padding: var(--space-l);
   font-size: 186px;
   line-height: normal;
-  text-box-trim: none;
+  @include trim-disable;
 
-  @include to-s {
+  @include xs {
     font-size: 164px;
   }
 }
@@ -91,7 +92,7 @@
 .guideLabel {
   right: calc(100% + var(--space-xs));
 
-  @include to-s {
+  @include xs {
     display: none;
   }
 }

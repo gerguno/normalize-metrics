@@ -34,13 +34,13 @@ $invert-ease: cubic-bezier(0.2, 0, 0, 1);
     }
 
     g rect:nth-of-type(even) {
-      fill: var(--color-background);
+      fill: var(--color-background-muted-solid);
     }
   }
 
   &.inverted svg g {
     rect:nth-of-type(odd) {
-      fill: var(--color-background);
+      fill: var(--color-background-muted-solid);
     }
 
     rect:nth-of-type(even) {

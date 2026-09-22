@@ -5,8 +5,8 @@
   align-items: center;
   justify-content: center;
   gap: var(--space-xs);
-  height: var(--space-ui-element-height);
-  min-height: var(--space-ui-element-height);
+  height: var(--space-ui-element-height-sm);
+  min-height: var(--space-ui-element-height-sm);
   padding: 0 var(--space-ui-element-padding-inline-text);
   border: 0;
   border-radius: var(--radius-s);
@@ -15,6 +15,12 @@
   text-decoration: none;
   cursor: pointer;
   white-space: nowrap;
+  box-shadow: var(--shadow-outer);
+
+  &.quaternary,
+  &.shell {
+    box-shadow: none;
+  }
   transition:
     background-color 0.2s ease,
     color 0.2s ease,
@@ -90,15 +96,25 @@
 .shell {
   width: var(--space-xl);
   padding: 0;
-  background-color: var(--color-foreground);
   color: var(--color-secondary);
 
   @include hover-supported {
     &:not(:disabled):hover {
-      color: var(--color-background);
-      background-color: color-mix(in srgb, var(--color-foreground) 88%, white);
+      background-color: var(--color-hover-dark);
+      color: var(--color-foreground);
     }
   }
+}
+
+.sizeM {
+  height: var(--space-ui-element-height-md);
+  min-height: var(--space-ui-element-height-md);
+  padding: 0 var(--space-m);
+}
+
+.quaternary.sizeM,
+.shell.sizeM {
+  width: var(--space-ui-element-height-md);
 }
 
 .fullWidth {

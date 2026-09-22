@@ -45,7 +45,7 @@ Option 4 is the CSS path the intro already names; it is not the product. Option 
 ### Surfaces
 
 - **GUI** — drop one font, show the cap-center measurement, toggle before / after, download the rewritten face. Examples at the bottom repeat that measurement on known fonts.
-- **CLI** — install with npm (`normalize-metrics` globally, or `npx` once). One path is one file. A folder means every `.otf`, `.ttf`, `.woff`, and `.woff2` inside it. Writes a normalized copy next to the original. `--check` reports fonts that are still off and exits without writing. `--dry-run` is the same report with no write. Variable fonts and TTC are skipped in v1, with a one-line reason.
+- **CLI** — install with npm (`normalize-metrics` globally, or `npx` once). One path is one file. A folder means every `.otf`, `.ttf`, `.woff`, and `.woff2` inside it. Writes a normalized copy next to the original. `--check` reports fonts that are still off and exits without writing. `--dry-run` is the same report with no write. `--css` writes `style.css` (or the path that follows the flag) with `ascent-override`, `descent-override`, and `line-gap-override` from that same box and does not write a font. The `src` is the original file. Variable fonts and TTC are skipped in v1, with a one-line reason.
 - **Engine** — `lib/engine.py` per ADR 0001. The Next.js `/api/normalize` route and the CLI are wrappers. Python / pip is not a public install.
 - **Config (CLI v1)** — `normalize-metrics.config.json` or a `"normalize-metrics"` key in `package.json`: `include`, `exclude`, `outDir`, `suffix`. Never overwrite by default; `--in-place` is opt-in. Print the EULA reminder once per run.
 
@@ -55,31 +55,49 @@ Canonical wording. Intro is shared. GUI and CLI sections only say how that surfa
 
 **Normalize font metrics: GUI and CLI solutions**
 
-The text within a button is not always centered. That is the font’s fault, not yours. You can already trim the line box in CSS with `text-box: trim-both cap alphabetic`. That property became an option on August 18, 2026, when Firefox adopted it. The default is still the untrimmed box, and most type ramps and component kits were written for that default.
+The text within a button is not always centered. That is the font’s fault, not yours. You can trim the line box in CSS with `text-box: trim-both cap alphabetic`. That property became an option on August 18, 2026, when Firefox adopted it. The default is still the untrimmed box, and most type ramps and component kits were written for that default.
 
-These tools rewrite the font for that default case. They only change how the word sits in the box — not the letters, the look of the font, or anything else.
+Trim cuts descenders. An input, a textarea, or any box that clips overflow will cut g, p, and y once the line stops at the cap and the baseline. Turn trim off on those controls and you are back to the font’s real metrics.
+
+For the web, fix those metrics in CSS and leave the file alone. The same box is written as `ascent-override`, `descent-override`, and `line-gap-override`. Rewriting the font file is the other path, mostly for typographers who need that box everywhere the font is used, not only in one stylesheet.
 
 **GUI solution**
 
-Drop a font file to see the measurement, then download the rewritten face. The examples at the bottom show the same analysis on a few known fonts.
+Drop a font file to see the measurement, then download the rewritten font. That file is for typographers, and for any place that cannot take a stylesheet. The examples at the bottom show the same analysis on a few known fonts.
 
 **CLI solution**
 
-Install with npm, then point it at a file or a folder. A folder means every `.otf`, `.ttf`, `.woff`, and `.woff2` inside it. It writes a normalized copy next to the original.
+Install with npm. Then point the command at a single file, a set of files, or a folder.
 
 ```
 npm i -g normalize-metrics
-normalize-metrics Inter-Regular.otf
-normalize-metrics ./fonts
+```
+
+Or add it to a repo as a dev dependency:
+
+```
+npm i -D normalize-metrics
+```
+
+For the web, write a stylesheet and leave the font files alone. `--css` saves `style.css` with `ascent-override`, `descent-override`, and `line-gap-override`.
+
+```
+normalize-metrics Inter-Regular.woff2 Inter-Regular.otf --css
 ```
 
 Or once, without installing:
 
 ```
-npx normalize-metrics ./fonts
+npx normalize-metrics ./fonts --css
 ```
 
-In a repo, add it as a dev dependency and list the folders in the config. `--check` reports fonts that are still off and exits without writing.
+To rewrite the font, point it at a file or a folder. A folder means every `.otf`, `.ttf`, `.woff`, and `.woff2` inside it. It writes a normalized copy next to the original. That file is for typographers, and for anywhere a stylesheet cannot go.
+
+```
+normalize-metrics Inter-Regular.woff2 Inter-Regular.otf
+```
+
+`--check` reports fonts that are still off and exits without writing.
 
 ## Consequences
 
@@ -98,6 +116,7 @@ In a repo, add it as a dev dependency and list the folders in the config. `--che
 - A later Glyphs / MCP path is a third surface on the same engine, not a second formula.
 - Switching the extra-rule later is still a one-line engine change (ADR 0001). Already-downloaded and already-written CLI files keep the old extra.
 - The GUI page copy can stay shorter than this document’s intro; it must not contradict it.
+- `--css` prints the same target box. Pointing those descriptors at an already rewritten font shifts the baseline twice.
 
 ## Links
 

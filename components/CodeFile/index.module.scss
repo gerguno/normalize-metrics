@@ -1,0 +1,76 @@
+@import "@/styles/mixins";
+
+.root {
+  width: 100%;
+  overflow: hidden;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  border: var(--stroke) solid var(--color-border-solid);
+  border-radius: var(--radius-m);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-s) var(--space-s) var(--space-s) var(--space-m);
+  background: var(--color-background-muted-solid);
+  border-bottom: var(--stroke) solid var(--color-border-solid);
+}
+
+.icon {
+  flex: none;
+  font-size: 13px;
+  margin-block: calc((1cap - 16px) / 2);
+}
+
+.name {
+  margin: 0;
+  color: var(--color-foreground);
+}
+
+.body {
+  position: relative;
+  padding: var(--space-l) var(--space-m) var(--space-l) calc(var(--space-m) + var(--space-2xs));
+}
+
+.lines {
+  display: flex;
+  flex-direction: column;
+  padding-inline-end: calc(var(--space-xl) + var(--space-xs));
+}
+
+.line {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-m);
+}
+
+.gutter {
+  flex: none;
+  width: 2ch;
+  color: var(--syntax-comment);
+  text-align: end;
+  user-select: none;
+  @include trim-disable;
+}
+
+.source {
+  flex: 1;
+  min-width: 0;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  user-select: text;
+  @include trim-disable;
+}
+
+.copy {
+  position: absolute;
+  // Center the 32px button on the first untrimmed monoMd line (15px × 1.4).
+  top: calc(var(--space-l) + (15px * 1.4 - var(--space-ui-element-height-sm)) / 2);
+  right: 13px;
+
+  &:disabled {
+    opacity: 1;
+  }
+}

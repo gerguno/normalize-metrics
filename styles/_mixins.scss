@@ -4,7 +4,6 @@
   }
 }
 
-@mixin trim {
-  text-box-trim: trim-both;
-  text-box-edge: cap alphabetic;
+@mixin trim-disable {
+  text-box: none;
 }

@@ -1,4 +1,5 @@
-import { basename, resolve } from "node:path";
+import { mkdir, writeFile } from "node:fs/promises";
+import { basename, dirname, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { HELP, modeOf, parseArgs } from "./args.ts";
 import { emptyConfig, findConfig, mergeConfig } from "./config.ts";
@@ -7,6 +8,7 @@ import { runEngine } from "./engine.ts";
 import { formatOffset, outputPath } from "./paths.ts";
 import { formatReports } from "./report.ts";
 import { ProgressStack } from "./progress.ts";
+import { cssFaces, formatStylesheet } from "./css.ts";
 import { EULA, invocationDir, packageVersion, resolvePython } from "./runtime.ts";
 import { pathExists } from "./fs-exists.ts";
 import type { Args, Discovered, EngineResult, FileOutcome, FilePhase, Mode } from "./types.ts";
@@ -73,6 +75,9 @@ function alreadyGoodDetail(result: EngineResult): string {
   return `already good  ${formatOffset(result.before?.offset ?? result.after?.offset)}`;
 }
 
+const CSS_NOTICE =
+  "This stylesheet overrides the line box in CSS. It does not rewrite the font file.";
+
 function finishResult(
   id: string,
   dest: string,
@@ -81,6 +86,15 @@ function finishResult(
   stack: ProgressStack,
 ): FileOutcome {
   const offset = formatOffset(result.before?.offset);
+  if (mode === "css") {
+    const good = result.off === false;
+    stack.update(id, {
+      percent: 100,
+      phase: good ? "ok" : "done",
+      detail: good ? alreadyGoodDetail(result) : `${offset} → ${formatOffset(result.after?.offset)}`,
+    });
+    return { status: "css", result };
+  }
   if (result.off === false) {
     stack.update(id, { percent: 100, phase: "ok", detail: alreadyGoodDetail(result) });
     return { status: "ok", result };
@@ -110,6 +124,7 @@ function summarize(outcomes: FileOutcome[], mode: Mode): string {
     wrote: outcomes.filter((item) => item.status === "wrote").length,
     would: outcomes.filter((item) => item.status === "would-write").length,
     ok: outcomes.filter((item) => item.status === "ok").length,
+    css: outcomes.filter((item) => item.status === "css").length,
     off: outcomes.filter((item) => item.status === "off").length,
     skipped: outcomes.filter((item) => item.status === "skipped").length,
     failed: outcomes.filter((item) => item.status === "failed").length,
@@ -127,6 +142,9 @@ function summarize(outcomes: FileOutcome[], mode: Mode): string {
     parts.push(`${counts.off} off`);
     parts.push(`${counts.ok} ok`);
   }
+  if (mode === "css") {
+    parts.push(`${counts.css} measured`);
+  }
   if (counts.skipped) parts.push(`${counts.skipped} skipped`);
   if (counts.failed) parts.push(`${counts.failed} failed`);
   return parts.join(" · ");
@@ -135,22 +153,33 @@ function summarize(outcomes: FileOutcome[], mode: Mode): string {
 function exitCode(outcomes: FileOutcome[], mode: Mode): number {
   if (outcomes.some((item) => item.status === "failed")) return 1;
   if (mode === "check" && outcomes.some((item) => item.status === "off")) return 1;
+  if (mode === "css" && !outcomes.some((item) => item.status === "css")) return 1;
   if (outcomes.length === 0) return 1;
   return 0;
 }
 
 async function resolveTargets(args: Args, cwd: string, config: ReturnType<typeof mergeConfig>): Promise<Discovered[]> {
-  if (args.path) {
-    const target = resolve(cwd, args.path);
-    if (!(await pathExists(target))) {
-      throw new Error(`Not found: ${args.path}`);
+  if (args.paths.length) {
+    const found: Discovered[] = [];
+    const seen = new Set<string>();
+    for (const entry of args.paths) {
+      const target = resolve(cwd, entry);
+      if (!(await pathExists(target))) {
+        throw new Error(`Not found: ${entry}`);
+      }
+      const files = await discover(target, config);
+      for (const file of files) {
+        if (seen.has(file.abs)) continue;
+        seen.add(file.abs);
+        found.push(file);
+      }
     }
-    return discover(target, config);
+    return found;
   }
   if (config.include.length) {
     return discoverFromInclude(cwd, config);
   }
-  throw new Error("Point it at a file or a folder. See --help.");
+  throw new Error("Point it at a file, a set of files, or a folder. See --help.");
 }
 
 export async function main(argv = process.argv.slice(2)): Promise<number> {
@@ -180,7 +209,7 @@ export async function main(argv = process.argv.slice(2)): Promise<number> {
     return 2;
   }
 
-  if (!config.suffix && !args.inPlace) {
+  if (!config.suffix && !args.inPlace && !args.cssPath) {
     console.error("A suffix is required unless you pass --in-place. Default is -normalized.");
     return 2;
   }
@@ -217,7 +246,7 @@ export async function main(argv = process.argv.slice(2)): Promise<number> {
 
   stack.identify(
     files.map((file) => ({ id: file.abs, label: files.length > 1 ? file.rel : file.name })),
-    EULA,
+    mode === "css" ? CSS_NOTICE : EULA,
   );
 
   const outcomes: FileOutcome[] = [];
@@ -230,6 +259,19 @@ export async function main(argv = process.argv.slice(2)): Promise<number> {
 
   const reports = formatReports(outcomes);
   if (reports) process.stdout.write(`\n${reports}\n`);
+
+  if (mode === "css" && args.cssPath) {
+    const faces = cssFaces(files, outcomes);
+    if (!faces.length) {
+      console.error("No faces to write.");
+    } else {
+      const cssFile = resolve(cwd, args.cssPath);
+      await mkdir(dirname(cssFile), { recursive: true });
+      await writeFile(cssFile, formatStylesheet(faces, cssFile), "utf8");
+      const wrote = process.stderr.isTTY ? process.stderr : process.stdout;
+      wrote.write(`\nWrote ${cssFile}\n`);
+    }
+  }
 
   const summary = summarize(outcomes, mode);
   if (summary) {

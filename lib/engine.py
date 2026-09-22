@@ -86,6 +86,13 @@ def measure_bbox(font: TTFont, progress: Progress | None = None) -> tuple[int, i
     return y_min, y_max
 
 
+def units_percent(units: float, upm: int) -> float:
+    """CSS ascent-override / descent-override: |units| as a percent of the em."""
+    if upm <= 0:
+        return 0.0
+    return round(abs(units) / upm * 100, 1)
+
+
 def snapshot(font: TTFont, cap: int, x_height: int) -> dict:
     upm = font["head"].unitsPerEm
     hhea = font["hhea"]
@@ -108,8 +115,33 @@ def snapshot(font: TTFont, cap: int, x_height: int) -> dict:
         "below": round(below / upm * 1000, 1),
         "offset": round(offset_pm, 1),
         "centered": centered,
+        "ascentOverride": units_percent(hhea.ascent, upm),
+        "descentOverride": units_percent(hhea.descent, upm),
         "grade": grade,
     }
+
+
+ITALIC = 1 << 0
+OBLIQUE = 1 << 9
+
+
+def face_style(font: TTFont) -> str:
+    selection = int(getattr(font["OS/2"], "fsSelection", 0))
+    if selection & ITALIC:
+        return "italic"
+    if selection & OBLIQUE:
+        return "oblique"
+    subfamily = (font["name"].getDebugName(2) or "").lower()
+    if "italic" in subfamily:
+        return "italic"
+    if "oblique" in subfamily:
+        return "oblique"
+    return "normal"
+
+
+def face_weight(font: TTFont) -> int:
+    weight = int(getattr(font["OS/2"], "usWeightClass", 400) or 400)
+    return weight
 
 
 def set_name_suffix(font: TTFont, suffix: str = " Normalized") -> None:
@@ -225,6 +257,8 @@ def normalize(font: TTFont, progress: Progress | None = None) -> dict:
     family = font["name"].getDebugName(1) or "Font"
     return {
         "family": family.replace(" Normalized", ""),
+        "weight": face_weight(font),
+        "style": face_style(font),
         "before": before,
         "after": after,
         "off": off,

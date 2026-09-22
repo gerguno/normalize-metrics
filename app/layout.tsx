@@ -6,9 +6,23 @@ import "@/components/Scrollbar/index.scss";
 import "@/styles/globals.scss";
 
 export const metadata: Metadata = {
-  title: "Normalize font metrics",
+  title: "Normalize font metrics for web | Oles Gergun",
   description:
     "The text within a button is not always centered. This tool only changes how the word sits in the box.",
+  icons: {
+    icon: [
+      {
+        url: "/favicon.svg",
+        type: "image/svg+xml",
+        media: "(prefers-color-scheme: light)",
+      },
+      {
+        url: "/favicon-dark.svg",
+        type: "image/svg+xml",
+        media: "(prefers-color-scheme: dark)",
+      },
+    ],
+  },
 };
 
 export default function RootLayout({

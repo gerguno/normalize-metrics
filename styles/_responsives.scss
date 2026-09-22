@@ -1,6 +1,6 @@
 @import "./breakpoints.module";
 
-@mixin to-s {
+@mixin xs {
   @media (max-width: #{$bp-s - 1px}) {
     @content;
   }

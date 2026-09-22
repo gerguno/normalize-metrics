@@ -1,3 +1,5 @@
+@import "@/styles/mixins";
+
 .root {
 }
 
@@ -9,6 +11,7 @@
   background: transparent;
   position: relative;
   overflow: hidden;
+  @include trim-disable;
 }
 
 .quoteText {
@@ -16,8 +19,8 @@
   z-index: 1;
   font-size: 20px;
   line-height: normal;
-  text-box-trim: none;
   white-space: pre-wrap;
+  @include trim-disable;
 }
 
 .lines {

@@ -6,7 +6,6 @@ import styles from "./index.module.scss";
 type TextLinkBaseProps = {
   children: ReactNode;
   className?: string;
-  variant?: "underline" | "underline-hover";
 };
 
 type TextLinkAsLinkProps = TextLinkBaseProps &
@@ -26,16 +25,9 @@ export default function TextLink({
   asButton = false,
   children,
   className,
-  variant = "underline",
   ...props
 }: TextLinkProps) {
-  const rootClasses = cn(
-    styles.root,
-    variant === "underline" && styles.underline,
-    variant === "underline-hover" && styles.underlineHover,
-    asButton && styles.asButton,
-    className,
-  );
+  const rootClasses = cn(styles.root, asButton && styles.asButton, className);
 
   if (asButton) {
     const { type = "button", ...buttonProps } =

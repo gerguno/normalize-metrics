@@ -4,11 +4,12 @@
   display: inline-flex;
   align-items: center;
   gap: var(--space-xs);
-  height: var(--space-ui-element-height);
+  height: var(--space-ui-element-height-sm);
   padding: 8px var(--space-ui-element-padding-inline-text);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-s);
   background: transparent;
+  box-shadow: var(--shadow-inner);
   color: var(--color-secondary);
   cursor: pointer;
   white-space: nowrap;

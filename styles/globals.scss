@@ -1,10 +1,10 @@
 @import "./font";
 @import "./variables";
 @import "./responsives";
-@import "./mixins";
 
 * {
   box-sizing: border-box;
+  text-box: trim-both cap alphabetic;
 }
 
 html,
@@ -13,13 +13,16 @@ body {
   min-height: 100%;
 }
 
+html {
+  background: var(--color-background-muted);
+}
+
 body {
-  background: var(--color-background);
   color: var(--color-foreground);
   font-family: var(--font-ui);
   font-feature-settings: var(--font-ui-features);
   font-size: 14px;
-  line-height: 1.35;
+  line-height: 1.4;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;

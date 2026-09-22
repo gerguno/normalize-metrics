@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Button from "@/components/Button";
 import ButtonExample from "@/components/ButtonExample";
 import CodeChip from "@/components/CodeChip";
+import CodeFile from "@/components/CodeFile";
 import MetricsExample from "@/components/MetricsExample";
 import SummaryExample from "@/components/SummaryExample";
 import TextExample from "@/components/TextExample";
@@ -20,6 +21,18 @@ import { cn } from "@/utils/cn";
 import { isTriedId } from "@/utils/isTriedId";
 import textStyles from "@/styles/typography.module.scss";
 import styles from "./index.module.scss";
+
+const CSS_PREVIEW = `@font-face {
+  font-family: "Inter";
+  src: url("./Inter-Regular.woff2") format("woff2"),
+       url("./Inter-Regular.otf") format("opentype");
+  font-weight: 400;
+  font-style: normal;
+  ascent-override: 97.2%;
+  descent-override: 25%;
+  line-gap-override: 0%;
+}
+`;
 
 type UploadId = `upload:${string}`;
 type Source = TriedId | UploadId;
@@ -55,9 +68,7 @@ export default function ProjectPage() {
           );
           return [
             ...tried,
-            ...prev.filter(
-              (item) => !triedFamilies.has(item.originalFamily),
-            ),
+            ...prev.filter((item) => !triedFamilies.has(item.originalFamily)),
           ];
         });
         const selected = sourceRef.current;
@@ -143,118 +154,130 @@ export default function ProjectPage() {
       <div className={styles.column}>
         <Header>
           <nav
-            className={cn(styles.crumb, textStyles.bodySm)}
+            className={cn(styles.crumb, textStyles.bodyMd)}
             aria-label="Breadcrumb"
           >
             <span className={styles.crumbLead}>
               <span>⋊&gt;</span>
-              <span className={styles.crumbPath}>~/O/P/</span>
+              <span>~/O/P/</span>
             </span>
             <span className={styles.crumbCurrent}>
               <Icon name="cube" />
-              Normalize font metrics: GUI and CLI solutions
+              <span>Normalize font metrics for web: GUI and CLI solutions</span>
             </span>
           </nav>
 
           <div className={styles.sections}>
             <section className={styles.section}>
-              <p className={textStyles.bodySm}>Introduction</p>
-              <p className={cn(styles.copy, textStyles.bodySm)}>
+              <p className={textStyles.bodyMd}>Introduction</p>
+              <p className={cn(styles.copy, textStyles.bodyMd)}>
                 The text within a button is not always centered vertically. That
-                is the font’s fault, not yours. Of course, you can already trim
-                the line box in CSS with{" "}
-                <CodeChip>
-                  <span className={styles.codeProp}>text-box:</span>{" "}
-                  <span className={styles.codeValue}>
-                    trim-both cap alphabetic
-                  </span>
-                </CodeChip>
-                . That property became a cross-browser friendly option on August
-                18, 2026, when Firefox adopted it. But the default is still the
-                untrimmed box, and component kits were written for that default.
+                is the font’s fault, not yours. You can trim the line box in CSS
+                with{" "}
+                <CodeChip>text-box: trim-both cap alphabetic</CodeChip>. That property became a cross-browser option on
+                August 18, 2026, when Firefox adopted it. The default is still
+                the untrimmed box, and component kits were written for that
+                default.
               </p>
-              <p className={cn(styles.copy, textStyles.bodySm)}>
-                My tool rewrites the font for that default case. It only changes
-                how the word sits in the box: not the letters, the look of the
-                font, its rhythm or anything else.
+              <p className={cn(styles.copy, textStyles.bodyMd)}>
+                Trim cuts descenders. An input, a textarea, or any box that
+                clips overflow will cut g, p, and y once the line stops at the
+                cap and the baseline. Turn trim off on those controls and you
+                are back to the font’s real metrics, which may still sit high or
+                low.
+              </p>
+              <p className={cn(styles.copy, textStyles.bodyMd)}>
+                For the web, fix those metrics in CSS and leave the file alone.
+                The same box is written as ascent-override, descent-override,
+                and line-gap-override. Rewriting the font file is the other
+                path, mostly for typographers who need that box everywhere the
+                font is used, not only in one stylesheet.
               </p>
             </section>
-  
+
             <section className={styles.section}>
-              <p className={textStyles.bodySm}>How it works</p>
-              <p className={cn(styles.copy, textStyles.bodySm)}>
-                It makes the leftover above the caps equal the leftover below the
-                baseline, so a one-word label sits in the middle of equal
-                padding. Spare height the file already has is used first, whether
-                that is empty room in the line or extra leading. The line only
-                grows when real descenders would not fit after that.
+              <p className={textStyles.bodyMd}>How it works</p>
+              <p className={cn(styles.copy, textStyles.bodyMd)}>
+                Both paths use one box. The leftover above the caps equals the
+                leftover below the baseline, so a one-word label sits in the
+                middle of equal padding. Spare height the file already has is
+                used first, whether that is empty room in the line or extra
+                leading. The line only grows when real descenders would not fit
+                after that.
               </p>
             </section>
-  
+
             <section className={cn(styles.section, styles.gui)}>
               <div className={styles.intro}>
-                <p className={textStyles.bodySm}>GUI solution</p>
-                <p className={cn(styles.copy, textStyles.bodySm)}>
-                  Drop a font file to fix this problem, see the measurements, then
-                  download the rewritten font. You can also try three selected
-                  fonts at the bottom, and see how the tool impacted them: I’ve
-                  selected fonts I admire and would like to use in my work, but
-                  their metrics are a bit off by default: Unica77 LL by Lineto,
-                  GT America by Grilli Type, and BST Ritma by British Standard
-                  Type.
+                <p className={textStyles.bodyMd}>GUI solution</p>
+                <p className={cn(styles.copy, textStyles.bodyMd)}>
+                  Drop a font file to see the measurement, then download the
+                  rewritten font. That file is for typographers, and for any
+                  place that cannot take a stylesheet. You can also try three
+                  selected fonts at the bottom, and see how the tool changed
+                  them: I’ve selected fonts I admire and would like to use in my
+                  work, but their metrics are a bit off by default: Unica77 LL
+                  by Lineto, GT America by Grilli Type, and BST Ritma by British
+                  Standard Type.
                 </p>
               </div>
               <div className={styles.demo}>
                 <div className={styles.row}>
-                  {TRIED_FONTS.map((item) => (
-                    <Tab
-                      key={item.id}
-                      icon="aa"
-                      active={source === item.id}
-                      onClick={() => selectSource(item.id)}
-                    >
-                      {item.label}
-                    </Tab>
-                  ))}
-                  {uploads.map((item) => (
-                    <Tab
-                      key={item.id}
-                      icon="aa"
-                      active={source === item.id}
-                      onClick={() => selectSource(item.id)}
-                    >
-                      {item.label}
-                    </Tab>
-                  ))}
-                  <Button
-                    variant="primary"
-                    icon="upload"
-                    disabled={uploading}
-                    aria-busy={uploading}
-                    onClick={() => inputRef.current?.click()}
-                  >
-                    {uploading
-                      ? "Uploading and normalizing..."
-                      : "Upload your font"}
-                  </Button>
-                  <input
-                    ref={inputRef}
-                    type="file"
-                    hidden
-                    disabled={uploading}
-                    accept=".ttf,.otf,.woff,.woff2,.ttc"
-                    onChange={(event) => {
-                      const file = event.target.files?.[0];
-                      if (file) void handleFile(file);
-                      event.target.value = "";
-                    }}
-                  />
+                  <div className={styles.fonts}>
+                    {TRIED_FONTS.map((item) => (
+                      <Tab
+                        key={item.id}
+                        icon="aa"
+                        active={source === item.id}
+                        onClick={() => selectSource(item.id)}
+                      >
+                        {item.label}
+                      </Tab>
+                    ))}
+                    {uploads.map((item) => (
+                      <Tab
+                        key={item.id}
+                        icon="aa"
+                        active={source === item.id}
+                        onClick={() => selectSource(item.id)}
+                      >
+                        {item.label}
+                      </Tab>
+                    ))}
+                  </div>
                 </div>
+                <Button
+                  variant="secondary"
+                  fullWidth
+                  icon="upload"
+                  disabled={uploading}
+                  aria-busy={uploading}
+                  onClick={() => inputRef.current?.click()}
+                >
+                  {uploading
+                    ? "Uploading and normalizing..."
+                    : "Upload your font"}
+                </Button>
+                <input
+                  ref={inputRef}
+                  type="file"
+                  hidden
+                  disabled={uploading}
+                  accept=".ttf,.otf,.woff,.woff2,.ttc"
+                  onChange={(event) => {
+                    const file = event.target.files?.[0];
+                    if (file) void handleFile(file);
+                    event.target.value = "";
+                  }}
+                />
                 {error ? (
                   <p className={cn(styles.error, textStyles.bodySm)}>{error}</p>
                 ) : null}
                 <div
-                  className={cn(styles.examples, uploading && styles.examplesBusy)}
+                  className={cn(
+                    styles.examples,
+                    uploading && styles.examplesBusy,
+                  )}
                   inert={uploading || undefined}
                   aria-busy={uploading}
                 >
@@ -295,33 +318,56 @@ export default function ProjectPage() {
                 </div>
               </div>
             </section>
-  
+
             <section className={styles.section}>
-              <p className={textStyles.bodySm}>CLI solution</p>
-              <p className={cn(styles.copy, textStyles.bodySm)}>
-                Install with npm, then point it at a file or a folder. A folder
-                means every .otf, .ttf, .woff, and .woff2 inside it. It writes a
-                normalized copy next to the original.
-              </p>
-              <Shell
-                code={[
-                  "npm i -g normalize-metrics",
-                  "normalize-metrics Inter-Regular.otf",
-                  "normalize-metrics ./fonts",
-                ].join("\n")}
-              />
-              <p className={cn(styles.copy, textStyles.bodySm)}>
-                Or once, without installing:
-              </p>
-              <Shell code="npx normalize-metrics ./fonts" />
-              <p className={cn(styles.copy, textStyles.bodySm)}>
-                In a repo, add it as a dev dependency and list the folders in the
-                config. <CodeChip>--check</CodeChip> reports fonts that are still
-                off and exits without writing.
-              </p>
+              <div className={styles.methods}>
+                <div className={styles.method}>
+                  <p className={textStyles.bodyMd}>CLI solution</p>
+                  <p className={cn(styles.copy, textStyles.bodyMd)}>
+                    Install with npm. Then point the command at a single file, a
+                    set of files, or a folder. A folder means every .otf, .ttf,
+                    .woff, and .woff2 inside it.
+                  </p>
+                  <Shell code="npm i -g normalize-metrics" />
+                  <p className={cn(styles.copy, textStyles.bodyMd)}>
+                    Or add it to a repo as a dev dependency:
+                  </p>
+                  <Shell code="npm i -D normalize-metrics" />
+                </div>
+
+                <div className={styles.method}>
+                  <p className={textStyles.bodyMd}>CSS method</p>
+                  <p className={cn(styles.copy, textStyles.bodyMd)}>
+                    For the web, leave the font files alone.{" "}
+                    <CodeChip>--css</CodeChip> saves style.css with
+                    ascent-override, descent-override, and line-gap-override.
+                  </p>
+                  <Shell code="normalize-metrics Inter-Regular.woff2 Inter-Regular.otf --css" />
+                  <p className={cn(styles.copy, textStyles.bodyMd)}>
+                    Or once, without installing:
+                  </p>
+                  <Shell code="npx normalize-metrics ./fonts --css" />
+                  <CodeFile name="style.css" code={CSS_PREVIEW} />
+                </div>
+
+                <div className={styles.method}>
+                  <p className={textStyles.bodyMd}>File rewrite method</p>
+                  <p className={cn(styles.copy, textStyles.bodyMd)}>
+                    For typographers, and for anywhere a stylesheet cannot go.
+                    It writes a normalized copy next to the original. The
+                    letters stay the same.
+                  </p>
+                  <Shell code="normalize-metrics Inter-Regular.woff2 Inter-Regular.otf" />
+                  <p className={cn(styles.copy, textStyles.bodyMd)}>
+                    <CodeChip>--check</CodeChip> reports fonts that are still
+                    off and exits without writing.
+                  </p>
+                </div>
+              </div>
               <div className={styles.row}>
                 <Button
                   variant="secondary"
+                  size="m"
                   icon="github"
                   href="https://github.com/gerguno/normalize-metrics"
                   target="_blank"
@@ -330,6 +376,7 @@ export default function ProjectPage() {
                 </Button>
                 <Button
                   variant="secondary"
+                  size="m"
                   icon="npm"
                   href="https://www.npmjs.com/package/normalize-metrics"
                   target="_blank"
@@ -345,13 +392,16 @@ export default function ProjectPage() {
       <div className={styles.bottom}>
         <Subscribe />
 
-        <div className={cn(styles.footer, textStyles.bodySm)}>
+        <div className={cn(styles.footer, textStyles.bodyMd)}>
           <TextLink href="https://x.com/olesgergun" target="_blank">
             Follow me on X
           </TextLink>
           <p>
             © As a part of Rhizome project by{" "}
-            <TextLink href="https://olesgergun.com" target="_blank">Oles Gergun</TextLink>, 2026
+            <TextLink href="https://olesgergun.com" target="_blank">
+              Oles Gergun
+            </TextLink>
+            , 2026
           </p>
         </div>
       </div>

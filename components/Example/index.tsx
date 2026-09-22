@@ -9,8 +9,8 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { AnimatePresence, motion } from "motion/react";
 import Button from "@/components/Button";
+import Fade from "@/components/Fade";
 import Toggle from "@/components/Toggle";
 import { usePrefersReducedMotion } from "@/utils/usePrefersReducedMotion";
 import type { Metrics, NormalizeResult } from "@/lib/types";
@@ -19,7 +19,6 @@ import textStyles from "@/styles/typography.module.scss";
 import styles from "./index.module.scss";
 
 const AUTOPLAY_MS = 2800;
-const FADE_EASE = [0.2, 0, 0, 1] as const;
 
 export type ExampleDataProps = {
   result: NormalizeResult | null;
@@ -92,14 +91,6 @@ export default function Example({
   const [afterView, setAfterView] = useState(false);
   const [playing, setPlaying] = useState(true);
   const [inView, setInView] = useState(false);
-  const [canAnimate, setCanAnimate] = useState(false);
-  const duration = reduceMotion || !canAnimate ? 0 : 0.35;
-  const fade = { duration, ease: FADE_EASE };
-
-  useEffect(() => {
-    setCanAnimate(true);
-  }, []);
-
   useEffect(() => {
     if (reduceMotion) setPlaying(false);
   }, [reduceMotion]);
@@ -148,11 +139,7 @@ export default function Example({
         {eyebrow ? (
           <p className={cn(styles.eyebrow, textStyles.bodySm)}>{eyebrow}</p>
         ) : null}
-        {title ? (
-          <ExampleTitle fade={fade} canAnimate={canAnimate}>
-            {title}
-          </ExampleTitle>
-        ) : null}
+        {title ? <ExampleTitle>{title}</ExampleTitle> : null}
 
         <Button
           className={styles.play}
@@ -168,92 +155,42 @@ export default function Example({
               <p className={cn(styles.loading, textStyles.bodySm)}>
                 Uploading and analyzing
               </p>
-            ) : canAnimate ? (
-              <AnimatePresence mode="sync" initial={false}>
-                <motion.div
-                  key={afterView ? "after" : "before"}
-                  className={styles.fade}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={fade}
-                >
-                  <ExampleContext.Provider
-                    value={viewValue(result, afterView, loading, setAfterView)}
-                  >
-                    {children}
-                  </ExampleContext.Provider>
-                </motion.div>
-              </AnimatePresence>
             ) : (
-              <div className={styles.fade}>
+              <Fade
+                presenceKey={afterView ? "after" : "before"}
+                className={styles.fade}
+              >
                 <ExampleContext.Provider
                   value={viewValue(result, afterView, loading, setAfterView)}
                 >
                   {children}
                 </ExampleContext.Provider>
-              </div>
+              </Fade>
             )}
           </div>
         ) : null}
 
-        <Controls
-          fade={fade}
-          canAnimate={canAnimate}
-          onPause={() => setPlaying(false)}
-        />
+        <Controls onPause={() => setPlaying(false)} />
       </article>
     </ExampleContext.Provider>
   );
 }
 
-function ExampleTitle({
-  children,
-  fade,
-  canAnimate,
-}: {
-  children: ReactNode;
-  fade: { duration: number; ease: typeof FADE_EASE };
-  canAnimate: boolean;
-}) {
+function ExampleTitle({ children }: { children: ReactNode }) {
   const live = useExample();
   const titleKey =
     typeof children === "string" || typeof children === "number"
       ? String(children)
       : `${live.afterView ? "after" : "before"}:${live.loading ? "loading" : (live.result?.family ?? "")}`;
-  const frame = (
-    <ExampleContext.Provider value={live}>{children}</ExampleContext.Provider>
-  );
-
-  if (!canAnimate) {
-    return <div className={cn(styles.title, textStyles.bodySm)}>{frame}</div>;
-  }
 
   return (
-    <AnimatePresence mode="sync" initial={false}>
-      <motion.div
-        key={titleKey}
-        className={cn(styles.title, textStyles.bodySm)}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={fade}
-      >
-        {frame}
-      </motion.div>
-    </AnimatePresence>
+    <Fade presenceKey={titleKey} className={cn(styles.title, textStyles.bodySm)}>
+      <ExampleContext.Provider value={live}>{children}</ExampleContext.Provider>
+    </Fade>
   );
 }
 
-function Controls({
-  fade,
-  canAnimate,
-  onPause,
-}: {
-  fade: { duration: number; ease: typeof FADE_EASE };
-  canAnimate: boolean;
-  onPause: () => void;
-}) {
+function Controls({ onPause }: { onPause: () => void }) {
   const { afterView, setAfterView } = useExample();
   const label = afterView ? "After" : "Before";
 
@@ -263,22 +200,12 @@ function Controls({
         <span className={styles.captionSizer} aria-hidden="true">
           Before
         </span>
-        {canAnimate ? (
-          <AnimatePresence mode="sync" initial={false}>
-            <motion.p
-              key={afterView ? "after" : "before"}
-              className={styles.captionText}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={fade}
-            >
-              {label}
-            </motion.p>
-          </AnimatePresence>
-        ) : (
-          <p className={styles.captionText}>{label}</p>
-        )}
+        <Fade
+          presenceKey={afterView ? "after" : "before"}
+          className={styles.captionText}
+        >
+          {label}
+        </Fade>
       </div>
       <Toggle
         checked={afterView}
