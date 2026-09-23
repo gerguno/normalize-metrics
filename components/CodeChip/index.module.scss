@@ -9,7 +9,7 @@
   @include trim-disable;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
-  padding: 1px 6px var(--space-3xs) 6px;
+  padding: 0.5px 6px 1.5px 6px;
   border-radius: var(--space-2xs);
   background: var(--color-background);
   border: 1px solid var(--color-border);

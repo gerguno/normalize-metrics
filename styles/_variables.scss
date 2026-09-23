@@ -89,12 +89,12 @@
   --color-border-contrast: var(--color-gray-7);
   --color-background-muted: color-mix(
     in srgb,
-    var(--color-foreground) 1%,
+    var(--color-foreground) 2%,
     transparent
   );
   --color-background-muted-solid: color-mix(
     in srgb,
-    var(--color-foreground) 1%,
+    var(--color-foreground) 2%,
     var(--color-background)
   );
   --color-hover-dark: color-mix(
