@@ -41,7 +41,9 @@
 .theme {
   display: flex;
   margin-top: var(--space-3xl);
+}
 
+.themeWideHidden {
   @include l {
     display: none;
   }

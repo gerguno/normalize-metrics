@@ -22,12 +22,10 @@ function Chrome({
   menuOpen,
   onToggleMenu,
   size,
-  theme,
 }: {
   menuOpen: boolean;
   onToggleMenu: () => void;
   size: 96 | 50;
-  theme?: ReactNode;
 }) {
   return (
     <>
@@ -39,7 +37,6 @@ function Chrome({
         borderRadius={size === 96 ? 16 : 8}
         className={styles.mark}
       />
-      {theme}
       <button
         className={styles.menu}
         type="button"
@@ -121,7 +118,7 @@ export default function Header({ className, children }: HeaderProps) {
   const menu = (
     <SiteMenu
       open={menuOpen}
-      showTheme={visible}
+      hideThemeOnLarge={visible}
       onExitComplete={() => setMenuChrome(false)}
     />
   );
@@ -139,7 +136,6 @@ export default function Header({ className, children }: HeaderProps) {
             menuOpen={menuOpen}
             onToggleMenu={() => setMenu(!menuOpen)}
             size={96}
-            theme={<ThemeToggle className={styles.mainTheme} />}
           />
         </header>
         {visible ? null : menu}

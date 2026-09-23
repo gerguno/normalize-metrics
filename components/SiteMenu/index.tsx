@@ -20,12 +20,15 @@ export type SiteMenuProps = {
   open: boolean;
   onExitComplete?: () => void;
   showTheme?: boolean;
+  /** Wide screens keep the compact-bar toggle, so this copy stays hidden. */
+  hideThemeOnLarge?: boolean;
 };
 
 export default function SiteMenu({
   open,
   onExitComplete,
   showTheme = true,
+  hideThemeOnLarge = false,
 }: SiteMenuProps) {
   return (
     <Reveal show={open} onExitComplete={onExitComplete}>
@@ -52,7 +55,9 @@ export default function SiteMenu({
           </div>
         </div>
         {showTheme ? (
-          <div className={styles.theme}>
+          <div
+            className={cn(styles.theme, hideThemeOnLarge && styles.themeWideHidden)}
+          >
             <ThemeToggle />
           </div>
         ) : null}
