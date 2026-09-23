@@ -32,9 +32,10 @@
     color: var(--color-secondary);
   }
 
-  &:focus,
+  &:focus:not(:focus-visible),
   &:focus-visible {
-    outline: none;
+    outline: var(--space-2xs) solid var(--color-hover-light);
+    outline-offset: 0;
     border-color: var(--color-secondary);
   }
 

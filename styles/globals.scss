@@ -44,6 +44,14 @@ body {
   outline-offset: 2px;
 }
 
+::selection {
+  background-color: var(--color-gray-5);
+}
+
+br::selection {
+  background-color: transparent;
+}
+
 h1,
 h2,
 h3,

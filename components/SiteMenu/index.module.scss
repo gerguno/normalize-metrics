@@ -1,9 +1,15 @@
+@import "@/styles/responsives";
+
 .menu {
   display: flex;
   flex-direction: column;
-  gap: 9px;
   padding-top: var(--menu-gap, var(--space-3xl));
-  padding-bottom: 0.4em;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
 }
 
 .prompt {
@@ -27,9 +33,18 @@
 
 .nav {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 9px var(--space-xl);
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-m);
+}
+
+.theme {
+  display: flex;
+  margin-top: var(--space-3xl);
+
+  @include l {
+    display: none;
+  }
 }
 
 .link {

@@ -24,7 +24,11 @@ export default function Subscribe() {
 
   async function onSubmit(event: FormEvent) {
     event.preventDefault();
-    if (!emailOk || disabled || status === "subscribed") return;
+    if (disabled || status === "subscribed") return;
+    if (!emailOk) {
+      setError("Enter a valid e-mail.");
+      return;
+    }
     setError("");
     setStatus("submitting");
     try {
@@ -57,30 +61,43 @@ export default function Subscribe() {
       viewport={{ once: true, amount: 0.6 }}
       transition={{ duration: 0.5, ease: [0.2, 0, 0, 1] }}
     >
-      <form className={styles.root} onSubmit={onSubmit}>
+      <form className={styles.root} noValidate onSubmit={onSubmit}>
         <p className={textStyles.bodyMd}>Subscribe for new stuff</p>
         <div className={styles.fields}>
-          <Input
-            type="email"
-            name="email"
-            size="m"
-            autoComplete="email"
-            placeholder="Enter your e-mail"
-            value={email}
-            disabled={disabled}
-            onChange={(event) => {
-              setStatus("idle");
-              setError("");
-              setEmail(event.target.value);
-            }}
-          />
+          <div className={styles.field}>
+            <Input
+              type="email"
+              name="email"
+              size="m"
+              autoComplete="email"
+              placeholder="Enter your e-mail"
+              value={email}
+              disabled={disabled}
+              aria-invalid={error ? true : undefined}
+              aria-describedby={error ? "subscribe-error" : undefined}
+              onChange={(event) => {
+                setStatus("idle");
+                setError("");
+                setEmail(event.target.value);
+              }}
+            />
+            {error ? (
+              <p
+                id="subscribe-error"
+                className={cn(styles.error, textStyles.bodySm)}
+                aria-live="polite"
+              >
+                {error}
+              </p>
+            ) : null}
+          </div>
           <Button
             type="submit"
             variant="primary"
             size="m"
             fullWidth
             icon={status === "subscribed" ? "checkmark" : undefined}
-            disabled={!emailOk || disabled || status === "subscribed"}
+            disabled={disabled || status === "subscribed"}
           >
             {status === "subscribed"
               ? "Subscribed"
@@ -88,14 +105,6 @@ export default function Subscribe() {
                 ? "Subscribing..."
                 : "Subscribe"}
           </Button>
-          {error ? (
-            <p
-              className={cn(styles.error, textStyles.bodyMd)}
-              aria-live="polite"
-            >
-              {error}
-            </p>
-          ) : null}
         </div>
       </form>
     </motion.div>

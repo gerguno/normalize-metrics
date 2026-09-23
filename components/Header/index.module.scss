@@ -56,11 +56,17 @@ $compact-size: 50px;
   align-items: center;
   width: 100%;
   padding: var(--space-l);
+  // One step more when the menu switch is not sitting at the bottom.
+  padding-bottom: var(--space-xl);
   background: var(--color-background);
   border-bottom: 1px solid var(--color-border);
   box-shadow: var(--shadow-outer);
   transform: translateY(0);
   --menu-gap: var(--space-l);
+}
+
+.compact.open {
+  padding-bottom: var(--space-l);
 }
 
 .compactColumn {
@@ -87,17 +93,42 @@ $compact-size: 50px;
   pointer-events: none;
 }
 
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-l);
+}
+
 .theme {
   display: none;
 }
 
+.mainTheme {
+  position: relative;
+  z-index: 1;
+}
+
 @include l {
-  .theme {
+  .compact.open {
+    padding-bottom: var(--space-xl);
+  }
+
+  .theme,
+  .mainTheme {
     position: absolute;
     z-index: 1;
+    display: block;
+  }
+
+  .theme {
     top: calc(var(--space-l) + ($compact-size - 28px) / 2);
     right: var(--space-l);
-    display: block;
+  }
+
+  // Same inset as the compact switch: --space-l from the viewport edge.
+  .mainTheme {
+    top: calc(($header-size - 28px) / 2);
+    right: calc(var(--space-l) - (100vw - var(--space-container)) / 2);
   }
 }
 

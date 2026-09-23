@@ -2,6 +2,12 @@ $rect-count: 7;
 $invert-duration: 0.35s;
 $invert-ease: cubic-bezier(0.2, 0, 0, 1);
 
+@property --logo-p {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0;
+}
+
 .root {
   display: flex;
   align-items: center;
@@ -16,10 +22,19 @@ $invert-ease: cubic-bezier(0.2, 0, 0, 1);
     aspect-ratio: 1 / 1;
 
     g rect {
+      --logo-p: 0;
       transition:
-        transform var(--logo-duration) ease,
+        --logo-p var(--logo-duration) ease,
         fill $invert-duration $invert-ease;
+      transform: scale(calc(1 + (var(--logo-scale) - 1) * var(--logo-p)));
       transform-origin: center center;
+    }
+
+    // Sharp until the scaled square grows past the largest resting square,
+    // then the radius eases to 8px at the viewBox edge. Divide by the live
+    // scale because the transform scales rx.
+    .layer {
+      rx: #{'calc(var(--logo-radius) * max(0, min(1, (var(--logo-size) * (1 + (var(--logo-scale) - 1) * var(--logo-p)) - var(--logo-square)) / (var(--logo-box, 24) - var(--logo-square)))) / (1 + (var(--logo-scale) - 1) * var(--logo-p)) * 1px)'};
     }
 
     @for $i from 1 through $rect-count {
@@ -48,19 +63,13 @@ $invert-ease: cubic-bezier(0.2, 0, 0, 1);
     }
   }
 
-  &.active svg g {
-    rect {
-      transform: scale(4);
-    }
-
-    rect:nth-of-type(3) {
-      transform: scale(4.4);
-    }
+  &.active svg g rect {
+    --logo-p: 1;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .root svg g rect {
-    transition: transform var(--logo-duration) ease;
+    transition: --logo-p var(--logo-duration) ease;
   }
 }

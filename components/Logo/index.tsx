@@ -30,6 +30,16 @@ const RECT_COUNT = LAYERS + 1; // фон + шари
 const DURATION_MS = 700;
 const STAGGER = 0.1; // частка від DURATION_MS між сусідніми rect'ами
 const TOTAL_MS = DURATION_MS * (1 + (RECT_COUNT - 1) * STAGGER);
+const SCALE = 4;
+const ACCENT_SCALE = 4.4;
+const EDGE_RADIUS_PX = 8;
+
+function layerStyle(size: number, scale: number): CSSProperties {
+  return {
+    "--logo-scale": scale,
+    "--logo-size": size,
+  } as CSSProperties;
+}
 
 export default function Logo({
   width = "auto",
@@ -93,11 +103,17 @@ export default function Logo({
     ? (borderRadius * VIEWBOX_SIZE) / renderedSize
     : borderRadius;
 
+  const edgeRadius =
+    renderedSize != null ? (EDGE_RADIUS_PX * VIEWBOX_SIZE) / renderedSize : 0;
+
   const rootStyle = {
     ...(width !== "auto" && { width }),
     ...(height !== "auto" && { height }),
     "--logo-duration": `${DURATION_MS}ms`,
     "--logo-stagger": STAGGER,
+    "--logo-radius": edgeRadius,
+    "--logo-square": baseInnerSize,
+    "--logo-box": VIEWBOX_SIZE,
   } as CSSProperties;
 
   return (
@@ -142,14 +158,20 @@ export default function Logo({
           </mask>
         </defs>
         <g mask={`url(#${maskId})`}>
-          <rect width={VIEWBOX_SIZE} height={VIEWBOX_SIZE} />
+          <rect
+            width={VIEWBOX_SIZE}
+            height={VIEWBOX_SIZE}
+            style={{ "--logo-scale": SCALE } as CSSProperties}
+          />
           {sizes.map((size, index) => (
             <rect
               key={index}
+              className={styles.layer}
               x={center - size / 2}
               y={center - size / 2}
               width={size}
               height={size}
+              style={layerStyle(size, index === 1 ? ACCENT_SCALE : SCALE)}
             />
           ))}
         </g>

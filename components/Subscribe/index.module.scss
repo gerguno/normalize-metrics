@@ -11,6 +11,7 @@
   --color-background: #191919;
   --color-foreground: #eeeeee;
   --color-secondary: #7b7b7b;
+  --color-gray-5: #313131;
   --color-focus: var(--color-foreground);
   --color-secondary-red-contrast: #ff9592;
   --color-border: color-mix(in srgb, var(--color-foreground) 12%, transparent);
@@ -49,6 +50,7 @@
   --color-background: #ffffff;
   --color-foreground: #202020;
   --color-secondary: #838383;
+  --color-gray-5: #e0e0e0;
   --color-secondary-red-contrast: #ce2c31;
 }
 
@@ -73,6 +75,12 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-m);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-s);
 }
 
 .legal {

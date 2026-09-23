@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-  type ReactNode,
-} from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { motion } from "motion/react";
 import { cn } from "@/utils/cn";
 import { inertOutside } from "@/utils/inertOutside";
@@ -16,7 +10,7 @@ import { useCompactOnScrollUp } from "@/utils/useCompactOnScrollUp";
 import { usePrefersReducedMotion } from "@/utils/usePrefersReducedMotion";
 import Logo from "@/components/Logo";
 import SiteMenu from "@/components/SiteMenu";
-import Toggle from "@/components/Toggle";
+import ThemeToggle from "@/components/ThemeToggle";
 import styles from "./index.module.scss";
 
 export type HeaderProps = {
@@ -24,65 +18,16 @@ export type HeaderProps = {
   children?: ReactNode;
 };
 
-function ThemeToggle() {
-  const [dark, setDark] = useState(false);
-
-  useLayoutEffect(() => {
-    setDark(document.documentElement.dataset.theme === "dark");
-  }, []);
-
-  useEffect(() => {
-    const query = window.matchMedia("(prefers-color-scheme: dark)");
-    const applySystem = () => {
-      let stored: string | null = null;
-      try {
-        stored = localStorage.getItem("theme");
-      } catch {
-        return;
-      }
-      if (stored === "dark" || stored === "light") return;
-      const next = query.matches;
-      if (next) document.documentElement.dataset.theme = "dark";
-      else delete document.documentElement.dataset.theme;
-      setDark(next);
-    };
-    applySystem();
-    query.addEventListener("change", applySystem);
-    return () => query.removeEventListener("change", applySystem);
-  }, []);
-
-  function toggleTheme(next: boolean) {
-    const root = document.documentElement;
-    if (next) root.dataset.theme = "dark";
-    else delete root.dataset.theme;
-    try {
-      localStorage.setItem("theme", next ? "dark" : "light");
-    } catch {
-      // Storage can be blocked. The attribute still switches this view.
-    }
-    setDark(next);
-  }
-
-  return (
-    <Toggle
-      variant="icons"
-      className={styles.theme}
-      data-theme-toggle=""
-      checked={dark}
-      aria-label={dark ? "Use light theme" : "Use dark theme"}
-      onCheckedChange={toggleTheme}
-    />
-  );
-}
-
 function Chrome({
   menuOpen,
   onToggleMenu,
   size,
+  theme,
 }: {
   menuOpen: boolean;
   onToggleMenu: () => void;
   size: 96 | 50;
+  theme?: ReactNode;
 }) {
   return (
     <>
@@ -94,6 +39,7 @@ function Chrome({
         borderRadius={size === 96 ? 16 : 8}
         className={styles.mark}
       />
+      {theme}
       <button
         className={styles.menu}
         type="button"
@@ -173,7 +119,11 @@ export default function Header({ className, children }: HeaderProps) {
     delay: reduceMotion ? 0 : menuOpen ? 0 : REVEAL_DURATION,
   };
   const menu = (
-    <SiteMenu open={menuOpen} onExitComplete={() => setMenuChrome(false)} />
+    <SiteMenu
+      open={menuOpen}
+      showTheme={visible}
+      onExitComplete={() => setMenuChrome(false)}
+    />
   );
 
   return (
@@ -189,6 +139,7 @@ export default function Header({ className, children }: HeaderProps) {
             menuOpen={menuOpen}
             onToggleMenu={() => setMenu(!menuOpen)}
             size={96}
+            theme={<ThemeToggle className={styles.mainTheme} />}
           />
         </header>
         {visible ? null : menu}
@@ -206,7 +157,7 @@ export default function Header({ className, children }: HeaderProps) {
         onFocusCapture={onFocusCapture}
         onBlurCapture={onBlurCapture}
       >
-        <ThemeToggle />
+        <ThemeToggle className={styles.theme} />
         <div className={styles.compactColumn}>
           <div className={styles.compactInner}>
             <Chrome
