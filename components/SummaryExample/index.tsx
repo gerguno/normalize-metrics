@@ -13,7 +13,7 @@ import type { Metrics } from "@/lib/types";
 import textStyles from "@/styles/typography.module.scss";
 import styles from "./index.module.scss";
 
-const LABELS = ["Ascent override", "Centered in box", "Descent override"];
+const LABELS = ["Ascent", "Centered in box", "Descent"];
 
 type StatSnapshot = {
   ascent: string;
@@ -124,7 +124,7 @@ function SummaryBody({
   return (
     <div className={styles.stats}>
       <Stat
-        label="Ascent override"
+        label="Ascent"
         value={ascentValue}
         from={from?.ascent}
         spinKey={spinKey}
@@ -143,7 +143,7 @@ function SummaryBody({
         width={column}
       />
       <Stat
-        label="Descent override"
+        label="Descent"
         value={descentValue}
         from={from?.descent}
         spinKey={spinKey}
