@@ -34,7 +34,9 @@
   "files": [
     "bin",
     "dist",
-    "lib/engine.py"
+    "lib/engine.py",
+    "requirements.txt",
+    "scripts/setup-python.mjs"
   ],
   "engines": {
     "node": ">=20"
@@ -46,7 +48,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "deploy": "next build && next start -p 3014",
+    "postinstall": "node scripts/setup-python.mjs",
+    "deploy": "node scripts/setup-python.mjs && next build && next start -p 3014",
     "cli": "node --experimental-strip-types --experimental-default-type=module --no-warnings=ExperimentalWarning cli/index.ts",
     "test:cli": "node --experimental-strip-types --experimental-default-type=module --test cli/*.test.ts",
     "build:cli": "tsc -p cli/tsconfig.build.json && printf '{\"type\":\"module\"}\\n' > dist/package.json",

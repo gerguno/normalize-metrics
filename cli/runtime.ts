@@ -43,15 +43,22 @@ function run(command: string, args: string[]): Promise<{ code: number; stdout: s
 }
 
 export async function resolvePython(): Promise<string> {
-  for (const command of ["python3", "python"]) {
+  const root = packageRoot();
+  const candidates = [
+    join(root, ".venv", "bin", "python"),
+    join(root, ".python", "bin", "python"),
+    "python3",
+    "python",
+  ];
+  for (const command of candidates) {
     try {
-      const probe = await run(command, ["-c", "import fontTools, sys; print(sys.executable)"]);
+      const probe = await run(command, ["-c", "import fontTools, brotli, sys; print(sys.executable)"]);
       if (probe.code === 0 && probe.stdout.trim()) return command;
     } catch {
       // try the next name
     }
   }
   throw new Error(
-    "The engine needs python3 with fontTools (implementation detail — not a pip product install).",
+    "The engine needs python3 with fontTools and Brotli. Run npm install in this repo.",
   );
 }

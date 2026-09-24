@@ -1,4 +1,5 @@
 import { spawn } from "node:child_process";
+import { existsSync } from "node:fs";
 import { mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -19,10 +20,21 @@ const ALLOWED = new Set([
   "application/x-font-otf",
 ]);
 
+function pythonCommand(): string {
+  const root = process.cwd();
+  for (const command of [
+    join(root, ".venv", "bin", "python"),
+    join(root, ".python", "bin", "python"),
+  ]) {
+    if (existsSync(command)) return command;
+  }
+  return "python3";
+}
+
 function runPython(input: string, output: string): Promise<string> {
   const script = join(process.cwd(), "lib", "engine.py");
   return new Promise((resolve, reject) => {
-    const child = spawn("python3", [script, input, output], {
+    const child = spawn(pythonCommand(), [script, input, output], {
       stdio: ["ignore", "pipe", "pipe"],
     });
     let stdout = "";

@@ -53,7 +53,7 @@ Rewriting a licensed font and redistributing the result may violate the EULA. Th
 ## Requirements
 
 - Node.js 20 or newer
-- Python 3 with [fontTools](https://github.com/fonttools/fonttools) (`pip install fonttools`) — an implementation detail, not a pip product install
+- Python 3 on the machine. `npm install` sets up the engine (fontTools and Brotli) in this repo. That stays an implementation detail, not a public pip install.
 
 ## Usage
 
